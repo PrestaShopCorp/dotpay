@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<module>
+	<name>dotpay</name>
+	<displayName><![CDATA[dotpay.pl]]></displayName>
+	<version><![CDATA[0.9]]></version>
+	<description><![CDATA[dotpay.pl płatności on-line]]></description>
+	<author><![CDATA[Dział Techniczny - Piotr Karecki]]></author>
+	<tab><![CDATA[payments_gateways]]></tab>
+	<confirmUninstall><![CDATA[Czy jesteś pewien że chcesz usnąć moduł płatności dotpay?]]></confirmUninstall>
+	<is_configurable>1</is_configurable>
+	<need_instance>1</need_instance>
+	<limited_countries></limited_countries>
+</module>
