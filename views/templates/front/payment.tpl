@@ -4,7 +4,7 @@
 {include file="$tpl_dir./errors.tpl"}
 <center><img src="{$module_dir}/views/templates/img/dotpay_logo_napisPL.png"><img width="128" height="128" src="{$module_dir}/views/templates/img/loading2.gif"><br />
 <p>{l s='Yours payment is loading. Please wait.' mod='dotpay'}</p></center>
-<form action="https://ssl.dotpay.pl/{if $dp_test eq '1'}test_payment/{/if}" method="post" id="dpForm" name="dpForm">
+<form action="https://ssl.dotpay.pl/{if $dp_test eq '1'}test_payment/{/if}" method="post" id="dpForm" name="dpForm" target="_parent">
 <p class="cart_navigation">
 	<input type="hidden" name="id" value="{$dp_id}"/>
 	<input type="hidden" name="control" value="{$dp_control}"/>
