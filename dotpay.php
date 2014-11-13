@@ -9,11 +9,10 @@ class dotpay extends PaymentModule {
 	
 	public function __construct()
             {
-		
 		$this->name = 'dotpay';
 		$this->tab = 'payments_gateways';
-                $this->version = '0.8.1';
-                $this->author = 'Dział Techniczny - Piotr Karecki';
+                $this->version = '0.8.7';
+                $this->author = 'dotpay.pl';
                 $this->ps_versions_compliancy = array('min' => '1.5', 'max' => '1.6');
 		$this->currencies = true;
 		parent::__construct();
@@ -120,8 +119,6 @@ class dotpay extends PaymentModule {
         
         return $this->display(__FILE__, 'payment_return.tpl');
     }
-	
-
 
 	// Payment confirmation
 	static public function check_urlc($params){
