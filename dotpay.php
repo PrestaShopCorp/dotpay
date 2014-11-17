@@ -11,7 +11,7 @@ class dotpay extends PaymentModule {
     {
 		$this->name = 'dotpay';
 		$this->tab = 'payments_gateways';
-                $this->version = '0.9';
+                $this->version = '0.91';
                 $this->author = 'dotpay.pl';
                 $this->ps_versions_compliancy = array('min' => '1.5', 'max' => '1.6');
 		$this->currencies = true;
@@ -98,7 +98,6 @@ class dotpay extends PaymentModule {
 		));
                 return $this->display(__FILE__, 'views/templates/admin/content.tpl');
     }
-	
     // Some hooks
     public function hookPayment()
     {
