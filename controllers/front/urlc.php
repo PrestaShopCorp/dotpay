@@ -3,6 +3,10 @@
 include(dirname(__FILE__).'/../../../../config/config.inc.php');
 include(dirname(__FILE__).'/../../dotpay.php');
 
+if (empty(Context::getContext()->link)) {
+Context::getContext()->link = new Link();
+}
+
 if($_SERVER['REMOTE_ADDR'] == '195.150.9.37' && $_SERVER['REQUEST_METHOD'] == 'POST') {
     if(Dotpay::check_urlc()) {
         $params = $_POST;
@@ -61,7 +65,7 @@ $params['operation_original_amount'] = $params['orginal_amount'];
                     die('WRONG TRANSACTION STATUS');
             }
             //$totalShop = Db::getInstance()->getValue($sql);
-            if ($order_id == Order::getOrderByCartId(intval($params['control']))) {
+            if ($order_id = Order::getOrderByCartId(intval($_POST['control']))) {
                 $history = new OrderHistory();
                 $history->id_order = intval($order_id);
                 
