@@ -1,3 +1,4 @@
+<body onload="document.createElement('form').submit.call(document.getElementById('dpForm'))">
 <center><img src="{$module_dir}/img/dotpay_logo_napisPL.png"><img width="128" height="128" src="{$module_dir}/img/loading2.gif"><br />
 <p>{l s='Yours payment is loading. Please wait.' mod='dotpay'}</p></center>
 <form action="https://ssl.dotpay.pl/{if $dp_test eq '1'}test_payment/{/if}" method="post" id="dpForm" name="dpForm" target="_parent">
@@ -21,6 +22,6 @@
 </form>
 {literal}
 <script language="JavaScript">
-setTimeout(function(){document.dpForm.submit()}, 3000);
+setTimeout(function(){document.dpForm.submit()}, 1000);
 </script>
 {/literal}

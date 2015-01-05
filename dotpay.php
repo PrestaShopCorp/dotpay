@@ -11,7 +11,7 @@ class dotpay extends PaymentModule {
     {
 		$this->name = 'dotpay';
 		$this->tab = 'payments_gateways';
-                $this->version = '1.0.5';
+                $this->version = '1.0.6';
                 $this->author = 'tech@dotpay.pl';
                 $this->ps_versions_compliancy = array('min' => '1.5', 'max' => '1.6');
 		$this->currencies = true;
