@@ -11,14 +11,14 @@ class dotpay extends PaymentModule {
     {
 		$this->name = 'dotpay';
 		$this->tab = 'payments_gateways';
-                $this->version = '1.0.1';
-                $this->author = 'dotpay.pl';
+                $this->version = '1.0.5';
+                $this->author = 'tech@dotpay.pl';
                 $this->ps_versions_compliancy = array('min' => '1.5', 'max' => '1.6');
 		$this->currencies = true;
 		parent::__construct();
 		$this->page = basename(__FILE__, '.php');
-		$this->displayName = $this->l('dotpay.pl');
-		$this->description = $this->l('dotpay.pl on-line payment');
+		$this->displayName = $this->l('dotpay');
+		$this->description = $this->l('Dotpay payment module');
 		$this->confirmUninstall = $this->l('Are you sure you want to uninstall dotpay payment module?');
     }
 
@@ -77,19 +77,18 @@ class dotpay extends PaymentModule {
 	// Function for display cinfiguration in back-office
     public function getContent()
     {
-                 global $smarty;
 		 // Checking for incoming configuration data
                  // TODO Security checks
-		if(isset($_POST['Save_DP']))
+		if(Tools::getIsset('Save_DP'))
                     {
-			Configuration::updateValue('DP_ID', intval($_POST['dp_id']));
-			Configuration::updateValue('DP_PIN', $_POST['dp_pin']);
-			Configuration::updateValue('DP_TEST', $_POST['dp_test']);
+			Configuration::updateValue('DP_ID', (int) Tools::getValue('dp_id'));
+			Configuration::updateValue('DP_PIN', Tools::getValue('dp_pin'));
+			Configuration::updateValue('DP_TEST', Tools::getValue('dp_test'));
 			$this->_dpConfigForm = 'OK';
                     }
 		
 		// Display of configuration fields
-		$smarty->assign(array(
+		$this->smarty->assign(array(
 			'DP_ID' => Configuration::get('DP_ID'),
 			'DP_PIN' => Configuration::get('DP_PIN'),
 			'DP_TEST' => Configuration::get('DP_TEST'),
@@ -117,54 +116,60 @@ class dotpay extends PaymentModule {
         return $this->display(__FILE__, 'payment_return.tpl');
     }
     
-    static public function check_urlc() {
-        if(strlen(intval(Configuration::get('DP_ID'))) == 6) {
+    static public function check_urlc() 
+            {
+        if(strlen((int) Configuration::get('DP_ID')) == 6) {
             return Dotpay::check_urlc_dev();
-	} else {
+	} else 
+            {
             return Dotpay::check_urlc_legacy();
 	}
     }
 		
+    
 	// Payment confirmation
-    static public function check_urlc_dev() {
+    static public function check_urlc_dev() 
+            {
                 $signature=
 			Configuration::get('DP_PIN').
 			Configuration::get('DP_ID'). 
-                        (isset($_POST['operation_number'])?$_POST['operation_number']:'').
-			(isset($_POST['operation_type'])?$_POST['operation_type']:'').
-			(isset($_POST['operation_status'])?$_POST['operation_status']:'').
-			(isset($_POST['operation_amount'])?$_POST['operation_amount']:'').
-			(isset($_POST['operation_currency'])?$_POST['operation_currency']:'').
-			(isset($_POST['operation_original_amount'])?$_POST['operation_original_amount']:'').
-			(isset($_POST['operation_original_currency'])?$_POST['operation_original_currency']:'').
-			(isset($_POST['operation_datetime'])?$_POST['operation_datetime']:'').
-			(isset($_POST['operation_related_number'])?$_POST['operation_related_number']:'').
-			(isset($_POST['control'])?$_POST['control']:'').
-			(isset($_POST['description'])?$_POST['description']:'').
-			(isset($_POST['email'])?$_POST['email']:'').
-			(isset($_POST['p_info'])?$_POST['p_info']:'').
-			(isset($_POST['p_email'])?$_POST['p_email']:'').
-			(isset($_POST['channel'])?$_POST['channel']:'');
+                        Tools::getValue('operation_number').
+			Tools::getValue('operation_type').
+			Tools::getValue('operation_status').
+			Tools::getValue('operation_amount').
+			Tools::getValue('operation_currency').
+			Tools::getValue('operation_original_amount').
+			Tools::getValue('operation_original_currency').
+			Tools::getValue('operation_datetime').
+			Tools::getValue('operation_related_number').
+			Tools::getValue('control').
+			Tools::getValue('description').
+			Tools::getValue('email').
+			Tools::getValue('p_info').
+			Tools::getValue('p_email').
+			Tools::getValue('channel');
 	$signature=hash('sha256', $signature);
-        return ($_POST['signature'] == $signature);
+        return (Tools::getValue('signature') == $signature);
     }
 	
-    static public function check_urlc_legacy() {
+    static public function check_urlc_legacy() 
+            {
 		$signature =
 			Configuration::get('DP_PIN').":".
 			Configuration::get('DP_ID').":".
-			$_POST['control'].":".
-			$_POST['t_id'].":".
-			$_POST['amount'].":". 
-			$_POST['email'].":".
-			$_POST['service'].":".  
-			$_POST['code'].":".
-			$_POST['username'].":".
-			$_POST['password'].":".
-			$_POST['t_status'];
+			Tools::getValue('control').":".
+			Tools::getValue('t_id').":".
+			Tools::getValue('amount').":". 
+			Tools::getValue('email').":".
+			Tools::getValue('service').":".  
+			Tools::getValue('code').":".
+			Tools::getValue('username').":".
+			Tools::getValue('password').":".
+			Tools::getValue('t_status');
 	$signature=hash('md5', $signature);
-	return ($_POST['md5'] == $signature);
-    }
+	return (Tools::getValue('md5') == $signature);
+    }    
+     
 }
 
 

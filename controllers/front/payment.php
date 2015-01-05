@@ -2,7 +2,8 @@
 
 
 class DotpayPaymentModuleFrontController extends ModuleFrontController
-{
+{	
+        
     	public function init()
 	{
 		$this->display_column_left = false;
@@ -14,15 +15,13 @@ class DotpayPaymentModuleFrontController extends ModuleFrontController
 		parent::initContent();
 
 		$cart = $this->context->cart;
-                
-		global $smarty;
 		$address = new Address(intval($cart->id_address_invoice));
 		$customer = new Customer(intval($cart->id_customer));
 		$this->module->validateOrder((int)$cart->id, Configuration::get('PAYMENT_DOTPAY_NEW_STATUS'), $cart->getOrderTotal(), $this->module->displayName, NULL, array(), NULL, false, $customer->secure_key);
-		$order = new Order($this->module->currentOrder);
+		//$order = new Order($this->module->currentOrder);
 		$currency_id = $cart->id_currency;
 		$currency_info = Currency::getCurrency($currency_id);
-		$smarty->assign(array(
+		$this->context->smarty->assign(array(
                         'module_dir' => $this->module->getPathUri(),
 			'dp_test' => Configuration::get('DP_TEST'),
 			'dp_id' => Configuration::get('DP_ID'),
@@ -37,7 +36,6 @@ class DotpayPaymentModuleFrontController extends ModuleFrontController
 			'address' => $address,
 			'currency' => $currency_info["iso_code"]
 		));
-
-		$this->setTemplate('payment.tpl');
+                $this->setTemplate('payment.tpl');
 	}
 }
