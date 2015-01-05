@@ -76,9 +76,8 @@ $params['operation_original_amount'] = $params['orginal_amount'];
                 $history->id_order = (int) $order_id;
                 
                 $sql = 'SELECT total_paid FROM '._DB_PREFIX_.'orders WHERE id_cart = '.(int) $params['control'].' and id_order = '.$order_id;
-                $totalAmount = Db::getInstance()->getValue($sql);
-                
-                $totalAmount = round($totalAmount,2);
+                $totalAmount = round(Db::getInstance()->getValue($sql),2);
+
                 $postAmount = round($params["operation_original_amount"],2);
                 
                 if ($toatalAmount > $postAmount) 
@@ -107,13 +106,6 @@ $params['operation_original_amount'] = $params['orginal_amount'];
     }
 } else 
     {
-    header("Expires: Mon, 26 Jul 1997 05:00:00 GMT");
-    header("Last-Modified: ".gmdate("D, d M Y H:i:s")." GMT");
-						
-    header("Cache-Control: no-store, no-cache, must-revalidate");
-    header("Cache-Control: post-check=0, pre-check=0", false);
-    header("Pragma: no-cache");
-						
-    header("Location: ../");
+    Tools::redirect("../");
     exit;
 }
