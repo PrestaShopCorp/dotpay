@@ -4,17 +4,17 @@ exit('nie zdefioniowanych \n');
 
 class dotpay extends PaymentModule {
 		
-    private $urlc_param = array();
     private $_dpConfigForm;
 	
     public function __construct()
     {
 		$this->name = 'dotpay';
 		$this->tab = 'payments_gateways';
-                $this->version = '1.0.7';
+                $this->version = '1.0.8';
                 $this->author = 'tech@dotpay.pl';
-                $this->ps_versions_compliancy = array('min' => '1.5', 'max' => '1.6');
-		$this->currencies = true;
+		//Removed due to bug in PrestaShop 1.5
+                //$this->ps_versions_compliancy = array('min' => '1.5', 'max' => '1.6');
+                $this->currencies = true;
 		parent::__construct();
 		$this->page = basename(__FILE__, '.php');
 		$this->displayName = $this->l('dotpay');
@@ -36,8 +36,9 @@ class dotpay extends PaymentModule {
 		if (Validate::isInt(Configuration::get('PAYMENT_DOTPAY_NEW_STATUS')) XOR (Validate::isLoadedObject($order_state_new = new OrderState(Configuration::get('PAYMENT_DOTPAY_NEW_STATUS')))))
                     {
 			$order_state_new = new OrderState();
-			$order_state_new->name[Language::getIdByIso("pl")] = "Oczekuje potwierdzenia platnosci";
-			$order_state_new->name[Language::getIdByIso("en")] = "Awaiting payment confirmation";
+                        foreach (Language::getLanguages(false) as $language) 
+                            $order_state_new->name[$language['id_lang']] = "Awaiting payment confirmation";
+                        $order_state_new->name[Language::getIdByIso("pl")] = "Oczekuje potwierdzenia platnosci";
 			$order_state_new->send_email = false;
 			$order_state_new->invoice = false;
 			$order_state_new->unremovable = false;
@@ -51,8 +52,9 @@ class dotpay extends PaymentModule {
 		if (Validate::isInt(Configuration::get('PAYMENT_DOTPAY_COMPLAINT_STATUS')) XOR (Validate::isLoadedObject($order_state_new = new OrderState(Configuration::get('PAYMENT_DOTPAY_COMPLAINT_STATUS')))))
                     {
 			$order_state_new = new OrderState();
-			$order_state_new->name[Language::getIdByIso("pl")] = "Rozpatorzna reklamacja";
-			$order_state_new->name[Language::getIdByIso("en")] = "Complaint";
+                        foreach (Language::getLanguages(false) as $language)
+                            $order_state_new->name[$language['id_lang']] = "Complaint";
+                        $order_state_new->name[Language::getIdByIso("pl")] = "Rozpatrzona reklamacja";
 			$order_state_new->send_email = false;
 			$order_state_new->invoice = false;
 			$order_state_new->unremovable = false;
@@ -100,9 +102,12 @@ class dotpay extends PaymentModule {
     // Some hooks
     public function hookPayment()
     {
-        if (!$this->active) {
+        if (!$this->active)
             return;
-        }
+
+        if (!Validate::isLoadedObject($customer))
+            return;
+    
         $this->smarty->assign(array('module_dir' => $this->_path));
 	return $this->display(__FILE__, 'payment.tpl');
     }
@@ -110,6 +115,12 @@ class dotpay extends PaymentModule {
     // Some hooks
     public function hookPaymentReturn($params)
     {
+        if (!$this->active)
+            return;
+
+        if (!Validate::isLoadedObject($customer))
+            return;
+
         $this->smarty->assign('reference', $params['objOrder']->reference);
         $customer = new Customer((int)$params['objOrder']->id_customer);
         $this->smarty->assign('email',$customer->email);
