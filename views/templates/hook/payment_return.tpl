@@ -1,4 +1,4 @@
-<center><img src="{$module_dir}/views/templates/img/dotpay_logo_napisPL.png"><img width="128" height="128" src="{$module_dir}/views/templates/img/loading2.gif"><br />
+<center><img src="{$module_dir}/img/dotpay_logo_napisPL.png"><img width="128" height="128" src="{$module_dir}/img/loading2.gif"><br />
 <p>{l s='Please wait for payment confirmation.' mod='dotpay'}</p></center>
 </center><br><br>
 
@@ -10,6 +10,6 @@
 
 {literal}
 <script language="JavaScript">
-setTimeout(function(){document.dpForm.submit()}, 3000);
+setTimeout(function(){document.dpForm.submit()}, 1000);
 </script>
 {/literal}
