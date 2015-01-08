@@ -8,8 +8,16 @@
 <input class="form-control" type="hidden" name="submitGuestTracking" value="1" />
 </form>
 
+{if $order_exist}
 {literal}
 <script language="JavaScript">
-setTimeout(function(){document.dpForm.submit()}, 1000);
+setTimeout(function(){document.dpForm.submit()}, 10000);
 </script>
 {/literal}
+{else}
+{literal}
+<script language="JavaScript">
+setTimeout(function(){location.reload(true)}, 10000);
+</script>
+{/literal}
+{/if}

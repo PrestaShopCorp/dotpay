@@ -17,7 +17,7 @@
 	<input type="hidden" name="city" value="{$address->city}" /> 
 	<input type="hidden" name="postcode" value="{$address->postcode}" />
 	<input type="hidden" name="currency" value="{$currency}" />
-	<input type="hidden" name="api_version" value="dev" />
+	<input type="hidden" name="api_version" value="legacy" />
 </p>
 </form>
 {literal}
