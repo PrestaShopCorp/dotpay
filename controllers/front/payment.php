@@ -39,7 +39,7 @@ class DotpayPaymentModuleFrontController extends ModuleFrontController
         
 	public function displayAjax()
         {
-                if($_SERVER['REMOTE_ADDR'] == '195.150.9.37a' && $_SERVER['REQUEST_METHOD'] == 'POST') 
+                if($_SERVER['REMOTE_ADDR'] == '195.150.9.37' && $_SERVER['REQUEST_METHOD'] == 'POST') 
                 {
                         if(Dotpay::check_urlc_legacy())
                         {
