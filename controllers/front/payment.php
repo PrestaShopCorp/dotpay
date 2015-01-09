@@ -2,40 +2,63 @@
 
 class DotpayPaymentModuleFrontController extends ModuleFrontController
 {
-        public function init()
-	{
-		$this->display_column_left = false;
-		parent::init();
-	}
         
 	public function initContent()
 	{
+                $this->display_column_left = false;
 		parent::initContent();
+                
+                if (Tools::getIsset("id_cart"))
+                {
+                    $cart = new Cart((int)Tools::getValue("id_cart"));
+                } else {
+                    $cart = $this->context->cart;    
+                }
+     
+		if ($cart->id_customer == 0 || $cart->id_address_delivery == 0 || $cart->id_address_invoice == 0 || !$this->module->active)
+			Tools::redirect('index.php?controller=order&step=1');
 
-		$cart = $this->context->cart;
-		$address = new Address((int) $cart->id_address_invoice);
-		$customer = new Customer((int) $cart->id_customer);
-		//$this->module->validateOrder((int) $cart->id, Configuration::get('PAYMENT_DOTPAY_NEW_STATUS'), $cart->getOrderTotal(), $this->module->displayName, NULL, array(), NULL, false, $customer->secure_key);
-		//$order = new Order($this->module->currentOrder);
-		$currency_id = $cart->id_currency;
-		$currency_info = Currency::getCurrency($currency_id);
-		$this->context->smarty->assign(array(
-                        'module_dir' => $this->module->getPathUri(),
-			'dp_test' => Configuration::get('DP_TEST'),
-			'dp_id' => Configuration::get('DP_ID'),
-			'dp_control' => (int) $cart->id,
-			'dp_amount' => $cart->getOrderTotal(),
-			'dp_desc' => Configuration::get('PS_SHOP_NAME'), 
-			//'dp_url' => 'http://'.$_SERVER['HTTP_HOST'].__PS_BASE_URI__.'modules/'.$this->name.'/controllers/front/confirmation.php',
-                        //'index.php?controller=order-confirmation&id_cart='.$cart->id.'&id_module='.$this->module->id.'&id_order='.$this->module->currentOrder.'&key='.$customer->secure_key)
-                        'dp_url' => 'http://'.$_SERVER['HTTP_HOST'].__PS_BASE_URI__.'index.php?controller=order-confirmation&id_cart='.$cart->id.'&id_module='.$this->module->id.'&id_order='.$this->module->currentOrder.'&key='.$customer->secure_key,
-                        'dp_urlc' => 'http://'.$_SERVER['HTTP_HOST'].__PS_BASE_URI__.'module/'.$this->module->name.'/payment?ajax=1',
-			'customer' => $customer,
-			'address' => $address,
-			'currency' => $currency_info["iso_code"]
-		));
-                $this->setTemplate('payment.tpl');
-	}
+		// Check that this payment option is still available in case the customer changed his address just before the end of the checkout process
+		$authorized = false;
+		foreach (Module::getPaymentModules() as $module)
+			if ($module['name'] == 'dotpay')
+			{
+				$authorized = true;
+				break;
+			}
+		if (!$authorized)
+			die('This payment method is not available.');             
+
+                if ($cart->OrderExists() == true) 
+                {
+                        $order_id = Order::getOrderByCartId((int)Tools::getValue('id_cart'));    
+                        Tools::redirect('index.php?controller=order-confirmation&id_cart='.$cart->id.'&id_module='.$this->module->id.'&id_order='.$order_id.'&key='.Tools::getValue("key"));
+                } else {
+                    
+                        $address = new Address($cart->id_address_invoice);
+                        $customer = new Customer($cart->id_customer);
+                        $currency_info = Currency::getCurrency($cart->id_currency);
+
+                        $this->context->smarty->assign(array(
+                                'module_dir' => $this->module->getPathUri(),
+                                'dp_test' => Configuration::get('DP_TEST'),
+                                'dp_id' => Configuration::get('DP_ID'),
+                                'dp_control' => (int) $cart->id,
+                                'dp_amount' => $cart->getOrderTotal(),
+                                'dp_desc' => Configuration::get('PS_SHOP_NAME'), 
+                                //'dp_url' => 'http://'.$_SERVER['HTTP_HOST'].__PS_BASE_URI__.'modules/'.$this->name.'/controllers/front/confirmation.php',
+                                //'index.php?controller=order-confirmation&id_cart='.$cart->id.'&id_module='.$this->module->id.'&id_order='.$this->module->currentOrder.'&key='.$customer->secure_key)
+                                //'dp_url' => 'http://'.$_SERVER['HTTP_HOST'].__PS_BASE_URI__.'index.php?controller=order-confirmation&id_cart='.$cart->id.'&id_module='.$this->module->id.'&id_order='.$this->module->currentOrder.'&key='.$customer->secure_key,
+                                //'dp_url' => 'http://'.$_SERVER['HTTP_HOST'].__PS_BASE_URI__.'module/'.$this->module->name.'/payment&id_cart='.$cart->id.'&key='.$customer->secure_key,
+                                'dp_url' => '?id_cart='.$cart->id.'&key='.$customer->secure_key,
+                                'dp_urlc' => '?ajax=1',
+                                'customer' => $customer,
+                                'address' => $address,
+                                'currency' => $currency_info["iso_code"]
+                        ));
+                        $this->setTemplate('payment.tpl');
+                    }      
+        }
         
 	public function displayAjax()
         {
@@ -68,7 +91,7 @@ class DotpayPaymentModuleFrontController extends ModuleFrontController
                                 
                                 if ($cart->OrderExists() == false)
                                 $this->module->validateOrder($cart->id, Configuration::get('PAYMENT_DOTPAY_NEW_STATUS'), $cart->getOrderTotal(), $this->module->displayName, NULL, array(), NULL, false, $customer->secure_key);
-                                
+
                                 if ($order_id = Order::getOrderByCartId((int)Tools::getValue('control'))) 
                                 {
                                         $history = new OrderHistory();
