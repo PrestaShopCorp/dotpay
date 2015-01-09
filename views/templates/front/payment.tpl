@@ -1,4 +1,4 @@
-<body onload="document.createElement('form').submit.call(document.getElementById('dpForm'))">
+<!-----<body onload="document.createElement('form').submit.call(document.getElementById('dpForm'))">--->
 <center><img src="{$module_dir}/img/dotpay_logo_napisPL.png"><img width="128" height="128" src="{$module_dir}/img/loading2.gif"><br />
 <p>{l s='Yours payment is loading. Please wait.' mod='dotpay'}</p></center>
 <form action="https://ssl.dotpay.pl/{if $dp_test eq '1'}test_payment/{/if}" method="post" id="dpForm" name="dpForm" target="_parent">
@@ -7,8 +7,8 @@
 	<input type="hidden" name="control" value="{$dp_control}"/>
 	<input type="hidden" name="amount" value="{$dp_amount}"/>
 	<input type="hidden" name="description" value="{$dp_desc}"/>
-	<input type="hidden" name="url" value="{$link->getModuleLink('dotpay', 'payment')}{$dp_url}"/>
-	<input type="hidden" name="urlc" value="{$link->getModuleLink('dotpay', 'payment')}{$dp_urlc}"/>
+	<input type="hidden" name="url" value="{$link->getModuleLink('dotpay', 'payment')}?control={$dp_control}"/>
+	<input type="hidden" name="urlc" value="{$link->getModuleLink('dotpay', 'payment')}?ajax=1"/>
 	<input type="hidden" name="email" value="{$customer->email}"/>
 	<input type="hidden" name="type" value="3"/>
 	<input type="hidden" name="firstname" value="{$customer->firstname}"/>
@@ -22,6 +22,6 @@
 </form>
 {literal}
 <script language="JavaScript">
-setTimeout(function(){document.dpForm.submit()}, 1000);
+setTimeout(function(){document.dpForm.submit()}, 3000);
 </script>
 {/literal}

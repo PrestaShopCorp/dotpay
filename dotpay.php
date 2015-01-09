@@ -10,7 +10,7 @@ class dotpay extends PaymentModule {
     {
 		$this->name = 'dotpay';
 		$this->tab = 'payments_gateways';
-                $this->version = '1.1.2';
+                $this->version = '1.1.3';
                 $this->author = 'tech@dotpay.pl';
 		//Removed due to bug in PrestaShop 1.5
                 //$this->ps_versions_compliancy = array('min' => '1.5', 'max' => '1.6');
@@ -118,10 +118,6 @@ class dotpay extends PaymentModule {
         if (!Validate::isLoadedObject($customer))
             return;
         
-        $this->smarty->assign('order_exist',0);
-        if ($cart->OrderExists() == true)
-            $this->smarty->assign('order_exist',1);
-
         $this->smarty->assign('reference', $params['objOrder']->reference);
         $this->smarty->assign('email',$customer->email);
         return $this->display(__FILE__, 'payment_return.tpl');            
