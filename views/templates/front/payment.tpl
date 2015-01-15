@@ -8,7 +8,7 @@
 	<input type="hidden" name="amount" value="{$dp_amount}"/>
 	<input type="hidden" name="description" value="{$dp_desc}"/>
 	<input type="hidden" name="url" value="{$link->getModuleLink('dotpay', 'payment')}?control={$dp_control}"/>
-	<input type="hidden" name="urlc" value="{$link->getModuleLink('dotpay', 'payment')}?ajax=1"/>
+	<input type="hidden" name="urlc" value="{$link->getModuleLink('dotpay', 'callback')}?ajax=1"/>
 	<input type="hidden" name="email" value="{$customer->email}"/>
 	<input type="hidden" name="type" value="3"/>
 	<input type="hidden" name="firstname" value="{$customer->firstname}"/>
