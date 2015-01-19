@@ -1,6 +1,6 @@
 <?php
 
-class DotpayPaymentModuleFrontController extends ModuleFrontController
+class dotpaycallbackModuleFrontController extends ModuleFrontController
 {
 	public function displayAjax()
         {
