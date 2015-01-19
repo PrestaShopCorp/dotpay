@@ -10,7 +10,7 @@ class dotpay extends PaymentModule {
     {
 		$this->name = 'dotpay';
 		$this->tab = 'payments_gateways';
-                $this->version = '1.2.0';
+                $this->version = '1.2.1';
                 $this->author = 'tech@dotpay.pl';
 		//Removed due to bug in PrestaShop 1.5
                 //$this->ps_versions_compliancy = array('min' => '1.5', 'max' => '1.6');
@@ -22,59 +22,50 @@ class dotpay extends PaymentModule {
 		$this->confirmUninstall = $this->l('Are you sure you want to uninstall dotpay payment module?');
     }
 
+    private function addNewOrderState($state, $names, $color)
+    {
+            $order_state = new OrderState();
+            $order_state->name = array();
+            foreach (Language::getLanguages() as $language)
+            {
+                if (Tools::strtolower($language['iso_code']) == 'pl') $order_state->name[$language['id_lang']] = $names[1];
+                else $order_state->name[$language['id_lang']] = $names[0];
+            }
+            $order_state->send_email = false;
+            $order_state->invoice = false;
+            $order_state->unremovable = false;
+            $order_state->color = $color;
+            
+            if ($order_state->add() || Configuration::updateValue($state, $order_state->id)) return true;
+            else return false;
+    }    
+    
     public function install()
     {
-		if (!parent::install()
-                            || !$this->registerHook('payment') 
-                            || !$this->registerHook('paymentReturn') 
-                            || !Configuration::updateValue('DP_ID', '') 
-                            || !Configuration::updateValue('DP_PIN', '') 
-                            || !Configuration::updateValue('DP_TEST', '')) {
-			return false;   
-                }
-                
-		if (Validate::isInt(Configuration::get('PAYMENT_DOTPAY_NEW_STATUS')) XOR (Validate::isLoadedObject($order_state_new = new OrderState(Configuration::get('PAYMENT_DOTPAY_NEW_STATUS')))))
-                    {
-			$order_state_new = new OrderState();
-                        foreach (Language::getLanguages(false) as $language) 
-                            $order_state_new->name[$language['id_lang']] = "Awaiting payment confirmation";
-                        $order_state_new->name[Language::getIdByIso("pl")] = "Oczekuje potwierdzenia platnosci";
-			$order_state_new->send_email = false;
-			$order_state_new->invoice = false;
-			$order_state_new->unremovable = false;
-			$order_state_new->color = "lightblue";
-			if (!$order_state_new->add())
-				return false;
-			if(!Configuration::updateValue('PAYMENT_DOTPAY_NEW_STATUS', $order_state_new->id))
-				return false;
-                    }
-		
-		if (Validate::isInt(Configuration::get('PAYMENT_DOTPAY_COMPLAINT_STATUS')) XOR (Validate::isLoadedObject($order_state_new = new OrderState(Configuration::get('PAYMENT_DOTPAY_COMPLAINT_STATUS')))))
-                    {
-			$order_state_new = new OrderState();
-                        foreach (Language::getLanguages(false) as $language)
-                            $order_state_new->name[$language['id_lang']] = "Complaint";
-                        $order_state_new->name[Language::getIdByIso("pl")] = "Rozpatrzona reklamacja";
-			$order_state_new->send_email = false;
-			$order_state_new->invoice = false;
-			$order_state_new->unremovable = false;
-			$order_state_new->color = "darkred";
-			if (!$order_state_new->add())
-				return false;
-			if(!Configuration::updateValue('PAYMENT_DOTPAY_COMPLAINT_STATUS', $order_state_new->id))
-				return false;
-                    }
-        return true;        
+        return (
+                parent::install() &&
+                Configuration::updateValue('DP_ID', '') &&
+                Configuration::updateValue('DP_PIN', '') &&
+                Configuration::updateValue('DP_TEST', '') &&
+                $this->registerHook('payment') &&
+                $this->registerHook('paymentReturn') &&
+                $this->addNewOrderState('PAYMENT_DOTPAY_NEW_STATUS', array('Awaiting payment confirmation', 'Oczekuje potwierdzenia płatności'),'lightblue') &&
+                $this->addNewOrderState('PAYMENT_DOTPAY_COMPLAINT_STATUS', array('Complaint', 'Rozpatrzona reklamacja'),'darkred')
+        );   
     }
-	
+    
     public function uninstall()
     {
-		if (!Configuration::deleteByName('DP_ID')
-				|| !Configuration::deleteByName('DP_PIN')
-				|| !Configuration::deleteByName('DP_TEST')
-				|| !parent::uninstall())
-			return false;
-		return true;
+        return(
+            Configuration::deleteByName('DP_ID') &&
+            Configuration::deleteByName('DP_PIN') &&
+            Configuration::deleteByName('DP_TEST') &&
+            Db::getInstance()->Execute("DELETE FROM " . _DB_PREFIX_ . "order_state WHERE id_order_state = ( SELECT value FROM " . _DB_PREFIX_ . "configuration WHERE name = 'PAYMENT_DOTPAY_NEW_STATUS' )") &&
+            Db::getInstance()->Execute("DELETE FROM " . _DB_PREFIX_ . "order_state_lang WHERE id_order_state = ( SELECT value FROM " . _DB_PREFIX_ . "configuration WHERE name = 'PAYMENT_DOTPAY_NEW_STATUS' )") &&
+            Db::getInstance()->Execute("DELETE FROM " . _DB_PREFIX_ . "order_state WHERE id_order_state = ( SELECT value FROM " . _DB_PREFIX_ . "configuration WHERE name = 'PAYMENT_DOTPAY_COMPLAINT_STATUS' )") &&
+            Db::getInstance()->Execute("DELETE FROM " . _DB_PREFIX_ . "order_state_lang WHERE id_order_state = ( SELECT value FROM " . _DB_PREFIX_ . "configuration WHERE name = 'PAYMENT_DOTPAY_COMPLAINT_STATUS' )") &&
+            parent::uninstall()
+        );
     }	
 	// Function for display cinfiguration in back-office
     public function getContent()
@@ -83,9 +74,10 @@ class dotpay extends PaymentModule {
                  // TODO Security checks
 		if(Tools::getIsset('Save_DP'))
                     {
-			Configuration::updateValue('DP_ID', (int) Tools::getValue('dp_id'));
+			Configuration::updateValue('DP_ID', (int)Tools::getValue('dp_id'));
 			Configuration::updateValue('DP_PIN', Tools::getValue('dp_pin'));
 			Configuration::updateValue('DP_TEST', Tools::getValue('dp_test'));
+                        Configuration::updateValue('DOTPAY_CONFIGURATION_OK', true);
 			$this->_dpConfigForm = 'OK';
                     }
 		
@@ -102,8 +94,8 @@ class dotpay extends PaymentModule {
     // Some hooks
     public function hookPayment()
     {
-        if (!$this->active)
-            return;
+        if (!$this->active) return;
+        if (empty((int)Configuration::get('DP_ID'))) return;
         $this->smarty->assign(array('module_dir' => $this->_path));
 	return $this->display(__FILE__, 'payment.tpl');
     }
@@ -120,7 +112,7 @@ class dotpay extends PaymentModule {
         
         if ($is_guest) $form_url=$this->context->link->getPageLink('guest-tracking', true);
         else $form_url=$this->context->link->getPageLink('history', true);
-        
+   
         $param = array(
             'order_reference' => $params['objOrder']->reference,
             'email' => $customer->email,
