@@ -10,7 +10,7 @@ class dotpay extends PaymentModule {
     {
 		$this->name = 'dotpay';
 		$this->tab = 'payments_gateways';
-                $this->version = '1.2.1';
+                $this->version = '1.2.2';
                 $this->author = 'tech@dotpay.pl';
 		//Removed due to bug in PrestaShop 1.5
                 //$this->ps_versions_compliancy = array('min' => '1.5', 'max' => '1.6');
@@ -24,6 +24,7 @@ class dotpay extends PaymentModule {
 
     private function addNewOrderState($state, $names, $color)
     {
+            if (!empty((int)Configuration::get($state))) return true;
             $order_state = new OrderState();
             $order_state->name = array();
             foreach (Language::getLanguages() as $language)
@@ -35,9 +36,10 @@ class dotpay extends PaymentModule {
             $order_state->invoice = false;
             $order_state->unremovable = false;
             $order_state->color = $color;
+            $order_state->module_name = $this->name;
             
             if ($order_state->add() || Configuration::updateValue($state, $order_state->id)) return true;
-            else return false;
+                else return false;
     }    
     
     public function install()
@@ -57,13 +59,16 @@ class dotpay extends PaymentModule {
     public function uninstall()
     {
         return(
+            Db::getInstance()->Execute("DELETE FROM " . _DB_PREFIX_ . "order_state WHERE id_order_state = " . Configuration::get('PAYMENT_DOTPAY_NEW_STATUS')) &&
+            Db::getInstance()->Execute("DELETE FROM " . _DB_PREFIX_ . "order_state_lang WHERE id_order_state = " . Configuration::get('PAYMENT_DOTPAY_NEW_STATUS')) &&
+            Db::getInstance()->Execute("DELETE FROM " . _DB_PREFIX_ . "order_state WHERE id_order_state = " . Configuration::get('PAYMENT_DOTPAY_COMPLAINT_STATUS')) &&
+            Db::getInstance()->Execute("DELETE FROM " . _DB_PREFIX_ . "order_state_lang WHERE id_order_state =  " . Configuration::get('PAYMENT_DOTPAY_COMPLAINT_STATUS')) &&
             Configuration::deleteByName('DP_ID') &&
             Configuration::deleteByName('DP_PIN') &&
             Configuration::deleteByName('DP_TEST') &&
-            Db::getInstance()->Execute("DELETE FROM " . _DB_PREFIX_ . "order_state WHERE id_order_state = ( SELECT value FROM " . _DB_PREFIX_ . "configuration WHERE name = 'PAYMENT_DOTPAY_NEW_STATUS' )") &&
-            Db::getInstance()->Execute("DELETE FROM " . _DB_PREFIX_ . "order_state_lang WHERE id_order_state = ( SELECT value FROM " . _DB_PREFIX_ . "configuration WHERE name = 'PAYMENT_DOTPAY_NEW_STATUS' )") &&
-            Db::getInstance()->Execute("DELETE FROM " . _DB_PREFIX_ . "order_state WHERE id_order_state = ( SELECT value FROM " . _DB_PREFIX_ . "configuration WHERE name = 'PAYMENT_DOTPAY_COMPLAINT_STATUS' )") &&
-            Db::getInstance()->Execute("DELETE FROM " . _DB_PREFIX_ . "order_state_lang WHERE id_order_state = ( SELECT value FROM " . _DB_PREFIX_ . "configuration WHERE name = 'PAYMENT_DOTPAY_COMPLAINT_STATUS' )") &&
+            Configuration::deleteByName('PAYMENT_DOTPAY_NEW_STATUS') &&
+            Configuration::deleteByName('PAYMENT_DOTPAY_COMPLAINT_STATUS') &&                
+            Configuration::deleteByName('DOTPAY_CONFIGURATION_OK') &&                
             parent::uninstall()
         );
     }	
