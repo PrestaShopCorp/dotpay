@@ -35,7 +35,7 @@ class dotpay extends PaymentModule
 	{
 		$this->name = 'dotpay';
 		$this->tab = 'payments_gateways';
-		$this->version = '1.3.0';
+		$this->version = '1.3.1';
                 $this->author = 'tech@dotpay.pl';
 
 		parent::__construct();
@@ -66,40 +66,47 @@ class dotpay extends PaymentModule
                 else return false;
     }
     
-	public function install()
-	{
+    public function install()
+    {
 	
         Configuration::updateValue('DP_TEST', false);
         Configuration::updateValue('DP_ID', '');
         Configuration::updateValue('DP_PIN', '');
         Configuration::updateValue('DOTPAY_CONFIGURATION_OK', false);
-		
-		return (
-                        parent::install() &&
-			$this->registerHook('header') &&
-			$this->registerHook('backOfficeHeader') &&
-			$this->registerHook('payment') &&
-			$this->registerHook('paymentReturn') &&
-			$this->addNewOrderState('PAYMENT_DOTPAY_NEW_STATUS', array('Awaiting payment confirmation', 'Oczekuje potwierdzenia płatności'),'lightblue') &&
-                $this->addNewOrderState('PAYMENT_DOTPAY_COMPLAINT_STATUS', array('Complaint', 'Rozpatrzona reklamacja'),'darkred')
-        );   
-	}
+        return 
+            parent::install() &&
+            $this->registerHook('header') &&
+            $this->registerHook('backOfficeHeader') &&
+            $this->registerHook('payment') &&
+            $this->registerHook('paymentReturn') &&
+            $this->addNewOrderState('PAYMENT_DOTPAY_NEW_STATUS', array('Awaiting payment confirmation', 'Oczekuje potwierdzenia płatności'),'lightblue') &&
+            $this->addNewOrderState('PAYMENT_DOTPAY_COMPLAINT_STATUS', array('Complaint', 'Rozpatrzona reklamacja'),'darkred');   
+    }
 	
     public function uninstall()
     {
-        return(
-            Db::getInstance()->Execute("DELETE FROM " . _DB_PREFIX_ . "order_state WHERE id_order_state = " . Configuration::get('PAYMENT_DOTPAY_NEW_STATUS')) &&
-            Db::getInstance()->Execute("DELETE FROM " . _DB_PREFIX_ . "order_state_lang WHERE id_order_state = " . Configuration::get('PAYMENT_DOTPAY_NEW_STATUS')) &&
-            Db::getInstance()->Execute("DELETE FROM " . _DB_PREFIX_ . "order_state WHERE id_order_state = " . Configuration::get('PAYMENT_DOTPAY_COMPLAINT_STATUS')) &&
-            Db::getInstance()->Execute("DELETE FROM " . _DB_PREFIX_ . "order_state_lang WHERE id_order_state =  " . Configuration::get('PAYMENT_DOTPAY_COMPLAINT_STATUS')) &&
+        $sql = 'SELECT `id_order_state` FROM '._DB_PREFIX_.'order_state WHERE `module_name` = "dotpay"';
+        if (!$result = Db::getInstance()->ExecuteS($sql))
+            return false;
+        
+        $sql=array();
+        foreach ($result as $query) 
+        {
+            $sql[] = "DELETE FROM " . _DB_PREFIX_ . "order_state WHERE id_order_state = " . $query["id_order_state"];
+            $sql[] = "DELETE FROM " . _DB_PREFIX_ . "order_state_lang WHERE id_order_state = " . $query["id_order_state"];
+        }   
+        foreach ($sql as $query)
+            if (Db::getInstance()->execute($query) == false)
+                return false;
+        
+        return    
             Configuration::deleteByName('DP_ID') &&
             Configuration::deleteByName('DP_PIN') &&
             Configuration::deleteByName('DP_TEST') &&
             Configuration::deleteByName('PAYMENT_DOTPAY_NEW_STATUS') &&
             Configuration::deleteByName('PAYMENT_DOTPAY_COMPLAINT_STATUS') &&                
             Configuration::deleteByName('DOTPAY_CONFIGURATION_OK') &&                
-            parent::uninstall()
-        );
+            parent::uninstall();
     }	
 
 
