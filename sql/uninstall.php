@@ -24,19 +24,22 @@
 *
 */
 
-if (!defined('_PS_VERSION_'))
-	exit;
+/**
+* In some cases you should not drop the tables.
+* Maybe the merchant will just try to reset the module
+* but does not want to loose all of the data associated to the module.
+*/
 
-function upgrade_module_0_8($module)
-{
-        // Process Module upgrade to 0.8
-	unlink(__FILE__.'/../confirmation.php');
-	unlink(__FILE__.'/../confirmation.tpl');
-	unlink(__FILE__.'/../dotpay.jpg');
-	unlink(__FILE__.'/../dotpay.tpl');
-	unlink(__FILE__.'/../dp_pay.tpl');
-	unlink(__FILE__.'/../payment.php');
-	unlink(__FILE__.'/../pl.php');
-	unlink(__FILE__.'/../urlc.php');
-	return $module; 
-}
+$sql = array(
+	"DELETE FROM " . _DB_PREFIX_ . "order_state WHERE id_order_state = " . Configuration::get('PAYMENT_DOTPAY_NEW_STATUS'),
+	"DELETE FROM " . _DB_PREFIX_ . "order_state_lang WHERE id_order_state = " . Configuration::get('PAYMENT_DOTPAY_NEW_STATUS'),
+	"DELETE FROM " . _DB_PREFIX_ . "order_state WHERE id_order_state = " . Configuration::get('PAYMENT_DOTPAY_COMPLAINT_STATUS'),
+	"DELETE FROM " . _DB_PREFIX_ . "order_state_lang WHERE id_order_state =  " . Configuration::get('PAYMENT_DOTPAY_COMPLAINT_STATUS')
+);
+
+//will replace commands from uninstall()
+$sql = array();
+
+foreach ($sql as $query)
+	if (Db::getInstance()->execute($query) == false)
+		return false;

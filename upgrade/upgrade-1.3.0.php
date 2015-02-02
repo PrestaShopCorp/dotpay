@@ -1,4 +1,5 @@
-{*
+<?php
+/**
 *
 *
 * NOTICE OF LICENSE
@@ -21,16 +22,13 @@
 *  @copyright dotpay
 *  @license   http://opensource.org/licenses/afl-3.0.php  Academic Free License (AFL 3.0)
 *
-*}
-<p class="dotpay"><img src="{$module_dir}/img/dotpay_logo_napisPL.png" /><img width="128" height="128" src="{$module_dir}/img/loading2.gif" /></p>
-<p class="dotpay">{l s='Yours payment is loading. Please wait.' mod='dotpay'}</p>
-<form action="{$form_url}" method="post" id="dpForm" name="dpForm" target="_parent">
-{foreach from=$params key=k item=v}
-<input type="hidden" name="{$k}" value="{$v}"/>
-{/foreach}
-</form>
-{literal}
-<script language="JavaScript">
-setTimeout(function(){document.dpForm.submit()}, 3000);
-</script>
-{/literal}
+*/
+
+if (!defined('_PS_VERSION_'))
+	exit;
+
+function upgrade_module_1_3_0($module)
+{
+        Configuration::updateValue('DP_TEST', false);
+	return $module;
+}
