@@ -35,7 +35,7 @@ class dotpay extends PaymentModule
 	{
 		$this->name = 'dotpay';
 		$this->tab = 'payments_gateways';
-		$this->version = '1.3.1';
+		$this->version = '1.3.2';
                 $this->author = 'tech@dotpay.pl';
 
 		parent::__construct();
@@ -47,8 +47,20 @@ class dotpay extends PaymentModule
 	
     private function addNewOrderState($state, $names, $color)
     {
+            if ($result = Db::getInstance()->ExecuteS('SELECT *
+            FROM `'._DB_PREFIX_.'order_state` os
+            LEFT JOIN `'._DB_PREFIX_.'order_state_lang` osl ON (os.`id_order_state` = osl.`id_order_state` AND osl.`id_lang` = '.(int)$this->context->language->id.')
+            WHERE module_name = "dotpay"'))
+                foreach ($result as $row)
+                    if ($row["name"] == $names[1] || $row["name"] == $names[0]) {
+                        Configuration::updateValue($state, $row["id_order_state"]);
+                        Db::getInstance()->execute("UPDATE " . _DB_PREFIX_ . 'order_state SET `deleted` = 0 WHERE `id_order_state` = ' . $row["id_order_state"]);       
+                    };
+
             $order_status = new OrderState((int)Configuration::get($state), (int)$this->context->language->id);
-            if (Validate::isLoadedObject($order_status)) return true;
+            if (Validate::isLoadedObject($order_status)) 
+                return true;
+            
             $order_state = new OrderState();
             $order_state->name = array();
             foreach (Language::getLanguages() as $language)
@@ -85,20 +97,16 @@ class dotpay extends PaymentModule
 	
     public function uninstall()
     {
-        $sql = 'SELECT `id_order_state` FROM '._DB_PREFIX_.'order_state WHERE `module_name` = "dotpay"';
-        if (!$result = Db::getInstance()->ExecuteS($sql))
-            return false;
-        
-        $sql=array();
-        foreach ($result as $query) 
-        {
-            $sql[] = "DELETE FROM " . _DB_PREFIX_ . "order_state WHERE id_order_state = " . $query["id_order_state"];
-            $sql[] = "DELETE FROM " . _DB_PREFIX_ . "order_state_lang WHERE id_order_state = " . $query["id_order_state"];
-        }   
+        $sql = array(
+                "UPDATE " . _DB_PREFIX_ . 'order_state SET `deleted` = 1 WHERE `module_name` = "dotpay"',
+                "UPDATE " . _DB_PREFIX_ . "order_state SET `deleted` = 1 WHERE id_order_state = " . Configuration::get('PAYMENT_DOTPAY_NEW_STATUS'),
+                "UPDATE " . _DB_PREFIX_ . "order_state SET `deleted` = 1 WHERE id_order_state = " . Configuration::get('PAYMENT_DOTPAY_COMPLAINT_STATUS')
+            );
+
         foreach ($sql as $query)
-            if (Db::getInstance()->execute($query) == false)
-                return false;
-        
+                if (Db::getInstance()->execute($query) == false)
+                        return false;        
+
         return    
             Configuration::deleteByName('DP_ID') &&
             Configuration::deleteByName('DP_PIN') &&

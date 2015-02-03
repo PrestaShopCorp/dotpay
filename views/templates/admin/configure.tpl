@@ -25,25 +25,25 @@
 
 <div class="panel"><div class="dotpay-offer">
     <h3>{l s='Registration' mod='dotpay'}</h3>
-    <p>{l s='W odpowiedzi na zapotrzebowanie rynku Dotpay od lat świadczy innowacyjne usługi płatności internetowych, dostarczając najszerszą ofertę rozwiązań dla klientów z branży e-commerce. Domeną są transfery pieniężne przesyłane pomiędzy kupującym a sprzedającym, wraz z kompleksowym serwisem, opartym na fachowym doradztwie i stosowaniu dodatkowych zabezpieczeń. W ramach oferty płatności internetowych Dotpay oferuje ponad 50 kanałów płatności, w tym: płatności mobilne, ratalne, gotówkowe, e-portfele, przelewy i karty płatnicze.' mod='dotpay'}</p>
-    <p>{l s='Wszystkim nowym klientom, którzy wypełnią formularz i chcą już dzisiaj zacząć przyjmować płatności, oferujemy promocyjne warunki współpracy:' mod='dotpay'}</p>
+    <p>{l s='In response to the market’s needs Dotpay has been delivering innovative Internet payment services providing the widest e-commerce solution offer for years. The domain is money transfers between a buyer and a merchant within a complex service based on counselling and additional security. Within an offer of Internet payments Dotpay offers over 50 payment channels including: mobile payments, instalments, cash, e-wallets, transfers and credit card payments.' mod='dotpay'}</p>
+    <p>{l s='To all new clients who have filled in a form and wish to accept payments we offer promotional conditions:' mod='dotpay'}</p>
     <ul>
-        <li><b>1,9%</b> {l s='prowizji od płatności internetowych (nie mniej niż 0.30 PLN)' mod='dotpay'}</li>
-        <li>{l s='płatności ratalne' mod='dotpay'} <b>{l s='bez prowizji!' mod='dotpay'}</b></li>
-        <li>{l s='opłata aktywacyjna tylko 10 PLN' mod='dotpay'}</li>
-        <li><b>{l s='bez dodatkowych opłat' mod='dotpay'}</b> {l s='za zwroty i wypłaty!' mod='dotpay'}</li>
+        <li><b>1,9%</b> {l s='commission on Internet payments (not less than PLN 0.30) ' mod='dotpay'}</li>
+        <li>{l s='instalment payments' mod='dotpay'} <b>{l s='without any commission!' mod='dotpay'}</b></li>
+        <li>{l s='an activation fee - only PLN 10' mod='dotpay'}</li>
+        <li><b>{l s='without any additional fees' mod='dotpay'}</b> {l s='for refunds and withdrawals!' mod='dotpay'}</li>
     </ul>
-    <p>{l s='Reasumując – minimalizując nakłady i czas pracy, zwiększasz swoje możliwości sprzedażowe. Nie zwlekaj i już teraz uruchom swoje konto!' mod='dotpay'}</p>
+    <p>{l s='In short, minimalizing effort and work time you will increase your sales possibilities. Do not hesitate and start your account now!' mod='dotpay'}</p>
     <div class="cta-button-container">
-        <a href="http://www.dotpay.pl/prestashop/" class="cta-button">{l s='Zarejestruj się!' mod='dotpay'}</a>
+        <a href="http://www.dotpay.pl/prestashop/" class="cta-button">{l s='Register now!' mod='dotpay'}</a>
     </div>
 </div></div>
 
 <div class="panel"><div class="dotpay-config">
     <h3>{l s='Configuration' mod='dotpay'}</h3>
-    <p>{l s='Dzięki modułowi płatności dotpay, jedyne czynności niezbędne do integracji to przepisanie numeru ID, PIN oraz odpowiednia konfiguracja powiadomień URLC.' mod='dotpay'}</p>
-    <p>{l s='ID oraz PIN można odnaleźć w panelu dotpay klikając "Ustawienia" na górnym pasku. Numer ID to 6-cyfrowy ciąg umieszczony po znaku # w wierszu "Sklep".' mod='dotpay'}</p>
-    <p>{l s='Konfiguracja URLC polega na ustawieniu adresu na który mają być kierowane informacje o płatnościach. Tym adresem jest: ' mod='dotpay'}<b>{$DP_URLC}</b></p>
-    <p>{l s='Jeżeli posiadają Państwo wiele sklepów połączonych z kontem, adres URL musi być przekazywany automatycznie i należy odznaczyć opcję "Blokuj zewnętrzne urlc" klikając w przycisk "Edycja".' mod='dotpay'}</p>
-    <p>{l s='Więcej szczegółów znają Państwo w dokumentacji dotpay po zalogowaniu do panelu.' mod='dotpay'}</p>
+    <p>{l s='Thanks to Dotpay payment module the only activities needed for integration are: rewriting ID and PIN numbers and URLC confirmation configuration.' mod='dotpay'}</p>
+    <p>{l s='ID and PIN can be found in Dotpay panel in Settings on the top bar. ID number is a 6-digit string placed after # in a “Shop” line.' mod='dotpay'}</p>
+    <p>{l s='URLC configuration is just setting an address to which information about a payment should be directed. This address is:' mod='dotpay'} <b>{$DP_URLC}</b></p>
+    <p>{l s='If you possess a few shops connected with one dotpay account URL must be directed automatically and “Block external urlc” must not be ticked in Edition section.' mod='dotpay'}</p>
+    <p>{l s='More information can be found in Dotpay manual.' mod='dotpay'}</p>
 </div></div>
