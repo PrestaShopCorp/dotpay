@@ -35,7 +35,7 @@ class dotpay extends PaymentModule
 	{
 		$this->name = 'dotpay';
 		$this->tab = 'payments_gateways';
-		$this->version = '1.3.2';
+		$this->version = '1.3.3';
                 $this->author = 'tech@dotpay.pl';
 
 		parent::__construct();
@@ -104,17 +104,16 @@ class dotpay extends PaymentModule
             );
 
         foreach ($sql as $query)
-                if (Db::getInstance()->execute($query) == false)
-                        return false;        
+                Db::getInstance()->execute($query);
 
-        return    
-            Configuration::deleteByName('DP_ID') &&
-            Configuration::deleteByName('DP_PIN') &&
-            Configuration::deleteByName('DP_TEST') &&
-            Configuration::deleteByName('PAYMENT_DOTPAY_NEW_STATUS') &&
-            Configuration::deleteByName('PAYMENT_DOTPAY_COMPLAINT_STATUS') &&                
-            Configuration::deleteByName('DOTPAY_CONFIGURATION_OK') &&                
-            parent::uninstall();
+        Configuration::deleteByName('DP_ID');
+        Configuration::deleteByName('DP_PIN');
+        Configuration::deleteByName('DP_TEST');
+        Configuration::deleteByName('PAYMENT_DOTPAY_NEW_STATUS');
+        Configuration::deleteByName('PAYMENT_DOTPAY_COMPLAINT_STATUS');
+        Configuration::deleteByName('DOTPAY_CONFIGURATION_OK');
+        
+        return parent::uninstall();
     }	
 
 
