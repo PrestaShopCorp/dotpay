@@ -59,19 +59,20 @@ class dotpaypaymentModuleFrontController extends ModuleFrontController
                 if ($cart->OrderExists() == true) 
                     Tools::redirect('index.php?controller=order-confirmation&id_cart='.$cart->id.'&id_module='.$this->module->id.'&id_order='.Order::getOrderByCartId($cart->id).'&key='.$customer->secure_key);                    
                 elseif (Tools::getValue("status") == "OK")
-                    $form_url= $this->context->link->getModuleLink('dotpay', 'payment').'?control='.$cart->id.'&status=OK';
+                    $form_url= $this->context->link->getModuleLink('dotpay', 'payment', array('control' => $cart->id, 'status' => 'OK'));
                 else {
                     $template = "payment";
-                    $form_url="https://ssl.dotpay.pl/";
+                    $form_url = "https://ssl.dotpay.pl/";
+                    $currency = Currency::getCurrency($cart->id_currency);
                     if (Configuration::get('DP_TEST')==1) $form_url.="test_payment/";
                     $params = array(
                             'id' => Configuration::get('DP_ID'),
                             'amount' => (float)$cart->getOrderTotal(true, Cart::BOTH),
-                            'currency' => Currency::getCurrency($cart->id_currency)["iso_code"],
+                            'currency' => $currency["iso_code"],
                             'description' => Configuration::get('PS_SHOP_NAME'), 
-                            'url' => $this->context->link->getModuleLink('dotpay', 'payment').'?control='.$cart->id,                            
+                            'url' => $this->context->link->getModuleLink('dotpay', 'payment', array('control' => $cart->id)),                        
                             'type' => 0,                        
-                            'urlc' => $this->context->link->getModuleLink('dotpay', 'callback').'?ajax=1',
+                            'urlc' => $this->context->link->getModuleLink('dotpay', 'callback', array('ajax' => '1')),
                             'control' => $cart->id,
                             'firstname' => $customer->firstname,
                             'lastname' => $customer->lastname,                        
@@ -86,7 +87,6 @@ class dotpaypaymentModuleFrontController extends ModuleFrontController
                             'params' => $params,
                             'module_dir' => $this->module->getPathUri(),
                             'form_url' => $form_url,
-                            'return' => $return
                             ));
                 $this->setTemplate($template.".tpl");
                 

@@ -35,7 +35,7 @@ class dotpay extends PaymentModule
 	{
 		$this->name = 'dotpay';
 		$this->tab = 'payments_gateways';
-		$this->version = '1.3.3';
+		$this->version = '1.3.4';
                 $this->author = 'tech@dotpay.pl';
 
 		parent::__construct();
@@ -130,7 +130,7 @@ class dotpay extends PaymentModule
 
 		$this->context->smarty->assign(array(
                     'module_dir' => $this->_path,
-                    'DP_URLC' => $this->context->link->getModuleLink('dotpay', 'callback').'?ajax=1'
+                    'DP_URLC' => $this->context->link->getModuleLink('dotpay', 'callback', array('ajax' => '1'))
                         ));
 
 		$output = $this->context->smarty->fetch($this->local_path.'views/templates/admin/configure.tpl');
@@ -258,10 +258,9 @@ class dotpay extends PaymentModule
 
     public function hookPayment()
     {
-        if (!$this->active) return;
-        if (empty((int)Configuration::get('DP_ID'))) return;
         $this->smarty->assign(array('module_dir' => $this->_path));
-	return $this->display(__FILE__, 'payment.tpl');
+        if ($this->active && is_numeric(Configuration::get('DP_ID')))
+            return $this->display(__FILE__, 'payment.tpl');
     }
 
     public function hookPaymentReturn($params)
