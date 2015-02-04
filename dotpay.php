@@ -35,7 +35,7 @@ class dotpay extends PaymentModule
 	{
 		$this->name = 'dotpay';
 		$this->tab = 'payments_gateways';
-		$this->version = '1.3.4';
+		$this->version = '1.3.5';
                 $this->author = 'tech@dotpay.pl';
 
 		parent::__construct();
@@ -126,8 +126,9 @@ class dotpay extends PaymentModule
 		/**
 		 * If values have been submitted in the form, process.
 		 */
+            if(Tools::getValue('submitDotpayModule'))
 		$this->_postProcess();
-
+            
 		$this->context->smarty->assign(array(
                     'module_dir' => $this->_path,
                     'DP_URLC' => $this->context->link->getModuleLink('dotpay', 'callback', array('ajax' => '1'))
