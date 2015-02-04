@@ -35,7 +35,7 @@ class dotpay extends PaymentModule
 	{
 		$this->name = 'dotpay';
 		$this->tab = 'payments_gateways';
-		$this->version = '1.3.5';
+		$this->version = '1.3.6';
                 $this->author = 'tech@dotpay.pl';
 
 		parent::__construct();
@@ -47,10 +47,8 @@ class dotpay extends PaymentModule
 	
     private function addNewOrderState($state, $names, $color)
     {
-            if ($result = Db::getInstance()->ExecuteS('SELECT *
-            FROM `'._DB_PREFIX_.'order_state` os
-            LEFT JOIN `'._DB_PREFIX_.'order_state_lang` osl ON (os.`id_order_state` = osl.`id_order_state` AND osl.`id_lang` = '.(int)$this->context->language->id.')
-            WHERE module_name = "dotpay"'))
+            $query='SELECT * FROM `'._DB_PREFIX_.'order_state` os LEFT JOIN `'._DB_PREFIX_.'order_state_lang` osl ON (os.`id_order_state` = osl.`id_order_state` AND osl.`id_lang` = '.(int)$this->context->language->id.') WHERE module_name = "dotpay"';
+            if ($result = Db::getInstance()->ExecuteS($query))
                 foreach ($result as $row)
                     if ($row["name"] == $names[1] || $row["name"] == $names[0]) {
                         Configuration::updateValue($state, $row["id_order_state"]);
@@ -269,7 +267,7 @@ class dotpay extends PaymentModule
         if (!$this->active)
             return;
         
-        $customer = new Customer((int)$params['objOrder']->id_customer);
+        $customer = new Customer($params['objOrder']->id_customer);
         if (!Validate::isLoadedObject($customer))
             return;
         

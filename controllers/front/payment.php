@@ -82,6 +82,8 @@ class dotpaypaymentModuleFrontController extends ModuleFrontController
                             'postcode'=> $address->postcode,
                             'api_version' => 'legacy'
                     );
+                    $chk = $params['id'].$params['amount'].$params['currency'].$params['description'].$params['control'].Configuration::get('DP_PIN');
+                    $params['chk']=hash('md5', $chk);
                 }
                 $this->context->smarty->assign(array(
                             'params' => $params,
