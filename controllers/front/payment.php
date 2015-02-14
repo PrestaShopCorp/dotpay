@@ -83,6 +83,7 @@ class dotpaypaymentModuleFrontController extends ModuleFrontController
                             'api_version' => 'legacy'
                     );
                     $chk = $params['id'].$params['amount'].$params['currency'].$params['description'].$params['control'].Configuration::get('DP_PIN');
+                    $chk = rawurlencode($chk);
                     $params['chk']=hash('md5', $chk);
                 }
                 $this->context->smarty->assign(array(

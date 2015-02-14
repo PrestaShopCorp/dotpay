@@ -29,13 +29,15 @@ if (!defined('_PS_VERSION_'))
 
 class dotpay extends PaymentModule
 {
+    	const DOTPAY_PAYMENTS_TEST_CUSTOMER = '701169';
+        const DOTPAY_PAYMENTS_TEST_CUSTOMER_PIN = 'CNiqWSUnfMaeEyWT3mwZch8xl2IbKv9U';
 	protected $config_form = false;
 
 	public function __construct()
 	{
 		$this->name = 'dotpay';
 		$this->tab = 'payments_gateways';
-		$this->version = '1.3.6';
+		$this->version = '1.3.7';
                 $this->author = 'tech@dotpay.pl';
 
 		parent::__construct();
@@ -79,10 +81,10 @@ class dotpay extends PaymentModule
     public function install()
     {
 	
-        Configuration::updateValue('DP_TEST', false);
-        Configuration::updateValue('DP_ID', '');
-        Configuration::updateValue('DP_PIN', '');
-        Configuration::updateValue('DOTPAY_CONFIGURATION_OK', false);
+        Configuration::updateValue('DP_TEST', true);
+        Configuration::updateValue('DP_ID', self::DOTPAY_PAYMENTS_TEST_CUSTOMER);
+        Configuration::updateValue('DP_PIN', self::DOTPAY_PAYMENTS_TEST_CUSTOMER_PIN);
+        Configuration::updateValue('DOTPAY_CONFIGURATION_OK', true);
         return 
             parent::install() &&
             $this->registerHook('header') &&
@@ -97,8 +99,8 @@ class dotpay extends PaymentModule
     {
         $sql = array(
                 "UPDATE " . _DB_PREFIX_ . 'order_state SET `deleted` = 1 WHERE `module_name` = "dotpay"',
-                "UPDATE " . _DB_PREFIX_ . "order_state SET `deleted` = 1 WHERE id_order_state = " . Configuration::get('PAYMENT_DOTPAY_NEW_STATUS'),
-                "UPDATE " . _DB_PREFIX_ . "order_state SET `deleted` = 1 WHERE id_order_state = " . Configuration::get('PAYMENT_DOTPAY_COMPLAINT_STATUS')
+                "UPDATE " . _DB_PREFIX_ . "order_state SET `deleted` = 1 WHERE id_order_state = " . pSQL(Configuration::get('PAYMENT_DOTPAY_NEW_STATUS')),
+                "UPDATE " . _DB_PREFIX_ . "order_state SET `deleted` = 1 WHERE id_order_state = " . pSQL(Configuration::get('PAYMENT_DOTPAY_COMPLAINT_STATUS'))
             );
 
         foreach ($sql as $query)
@@ -121,14 +123,11 @@ class dotpay extends PaymentModule
 	 */
 	public function getContent()
 	{
-		/**
-		 * If values have been submitted in the form, process.
-		 */
-            if(Tools::getValue('submitDotpayModule'))
-		$this->_postProcess();
-            
+                $this->_postProcess();
 		$this->context->smarty->assign(array(
                     'module_dir' => $this->_path,
+                    'DP_TEST' => Configuration::get('DP_TEST', false),
+                    'DOTPAY_CONFIGURATION_OK' => Configuration::get('DOTPAY_CONFIGURATION_OK', false),
                     'DP_URLC' => $this->context->link->getModuleLink('dotpay', 'callback', array('ajax' => '1'))
                         ));
 
@@ -157,7 +156,7 @@ class dotpay extends PaymentModule
 		$helper->token = Tools::getAdminTokenLite('AdminModules');
 
 		$helper->tpl_vars = array(
-			'fields_value' => $this->getConfigFormValues(), /* Add values for your inputs */
+                        'fields_value' => $this->getConfigFormValues(),
 			'languages' => $this->context->controller->getLanguages(),
 			'id_language' => $this->context->language->id
 		);
@@ -179,7 +178,7 @@ class dotpay extends PaymentModule
 				'input' => array(
 					array(
 						'type' => 'switch',
-						'label' => $this->l('Test mode'),
+                                           	'label' => $this->l('Test mode'),
 						'name' => 'DP_TEST',
 						'is_bool' => true,
 						'desc' => $this->l('Use this module in test environment'),
@@ -231,10 +230,12 @@ class dotpay extends PaymentModule
 	 */
 	protected function _postProcess()
 	{
-		$form_values = $this->getConfigFormValues();
-                Configuration::updateValue('DOTPAY_CONFIGURATION_OK', true);
-		foreach (array_keys($form_values) as $key)
-			Configuration::updateValue($key, Tools::getValue($key));
+            if(!is_numeric(Tools::getValue('DP_ID'))) return;
+            if(empty(Tools::getValue('DP_PIN'))) return;
+            $form_values = $this->getConfigFormValues();
+            foreach (array_keys($form_values) as $key)
+                    Configuration::updateValue($key, Tools::getValue($key));
+            Configuration::updateValue('DOTPAY_CONFIGURATION_OK', true);
 	}
 
 	/**
@@ -258,7 +259,7 @@ class dotpay extends PaymentModule
     public function hookPayment()
     {
         $this->smarty->assign(array('module_dir' => $this->_path));
-        if ($this->active && is_numeric(Configuration::get('DP_ID')))
+        if ($this->active && Configuration::get('DOTPAY_CONFIGURATION_OK'))
             return $this->display(__FILE__, 'payment.tpl');
     }
 
@@ -271,7 +272,8 @@ class dotpay extends PaymentModule
         if (!Validate::isLoadedObject($customer))
             return;
         
-        if ($is_guest) $form_url=$this->context->link->getPageLink('guest-tracking', true);
+       
+        if ((bool)Context::getContext()->customer->is_guest) $form_url=$this->context->link->getPageLink('guest-tracking', true);
         else $form_url=$this->context->link->getPageLink('history', true);
    
         $param = array(

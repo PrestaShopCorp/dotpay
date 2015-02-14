@@ -22,7 +22,7 @@
 *  @license   http://opensource.org/licenses/afl-3.0.php  Academic Free License (AFL 3.0)
 *
 *}
-
+{if !$DOTPAY_CONFIGURATION_OK or $DP_TEST}
 <div class="panel"><div class="dotpay-offer">
     <h3>{l s='Registration' mod='dotpay'}</h3>
     <p>{l s='In response to the market’s needs Dotpay has been delivering innovative Internet payment services providing the widest e-commerce solution offer for years. The domain is money transfers between a buyer and a merchant within a complex service based on counselling and additional security. Within an offer of Internet payments Dotpay offers over 50 payment channels including: mobile payments, instalments, cash, e-wallets, transfers and credit card payments.' mod='dotpay'}</p>
@@ -38,7 +38,7 @@
         <a href="http://www.dotpay.pl/prestashop/" class="cta-button">{l s='Register now!' mod='dotpay'}</a>
     </div>
 </div></div>
-
+{/if}
 <div class="panel"><div class="dotpay-config">
     <h3>{l s='Configuration' mod='dotpay'}</h3>
     <p>{l s='Thanks to Dotpay payment module the only activities needed for integration are: rewriting ID and PIN numbers and URLC confirmation configuration.' mod='dotpay'}</p>
@@ -46,4 +46,19 @@
     <p>{l s='URLC configuration is just setting an address to which information about a payment should be directed. This address is:' mod='dotpay'} <b>{$DP_URLC}</b></p>
     <p>{l s='If you possess a few shops connected with one dotpay account URL must be directed automatically and “Block external urlc” must not be ticked in Edition section.' mod='dotpay'}</p>
     <p>{l s='More information can be found in Dotpay manual.' mod='dotpay'}</p>
+</div></div>
+
+<div class="panel"><div class="dotpay-config-state">
+    <h3>{l s='Configuration state' mod='dotpay'}</h3>
+    {if $DOTPAY_CONFIGURATION_OK}
+        <table><tr><td><img width="100" height="100" src="{$module_dir}/img/tick.jpg"></td><td><p>
+        <p>{l s='Module is active. If you do not recive payment information, please chcek URLC configuration.' mod='dotpay'}</p>
+        <p>{if $DP_TEST}{l s='Module is in TEST mode. All payment informations are fake!' mod='dotpay'}{/if}</p>
+        </p></td></tr></table>
+    {else}
+        <table><tr><td><img width="100" height="100" src="{$module_dir}/img/cross.jpg"></td><td>
+        <p>{l s='Module is not active. Please check yours configuration.' mod='dotpay'}</p>
+        <p>{l s='ID and PIN can be found in Dotpay panel in Settings on the top bar. ID number is a 6-digit string placed after # in a “Shop” line.' mod='dotpay'}</p>
+        </p></td></tr></table>
+    {/if}
 </div></div>

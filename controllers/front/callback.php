@@ -61,15 +61,20 @@ class dotpaycallbackModuleFrontController extends ModuleFrontController
                                    
                                 if ($order_id = Order::getOrderByCartId((int)Tools::getValue('control'))) 
                                 {
-                                        $history = new OrderHistory();
-                                        $history->id_order = $order_id;
                                         $sql = 'SELECT total_paid FROM '._DB_PREFIX_.'orders WHERE id_cart = '.$cart->id.' and id_order = '.$order_id;
                                         $totalAmount = round(Db::getInstance()->getValue($sql),2);
-                                        $postAmount = round(Tools::getValue('original_amount'),2);
-
-                                        if ($toatalAmount > $postAmount) 
-                                                die("INCORRECT AMOUNT $totalAmount > ".Tools::getValue('original_amount'));
+                                        $dotpay_amount = round(Tools::getValue('orginal_amount'),2);
+                                        if ($totalAmount <> $dotpay_amount) 
+                                                die('INCORRECT AMOUNT '.$totalAmount.' <> '.$dotpay_amount);                                        
                                         
+                                        $currency = Currency::getCurrency($cart->id_currency);
+                                        $totalAmount .= " ".$currency["iso_code"];
+                                        $orginal_amount = trim(Tools::getValue('orginal_amount'));
+                                        if ($totalAmount <> $orginal_amount) 
+                                                die('INCORRECT ORG. AMOUNT '.$totalAmount.' <> '.$orginal_amount);
+
+                                        $history = new OrderHistory();
+                                        $history->id_order = $order_id;
                                         if ( OrderHistory::getLastOrderState($order_id) == _PS_OS_PAYMENT_ ) 
                                         {
                                                 die('WRONG STATE');

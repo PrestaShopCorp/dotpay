@@ -23,10 +23,10 @@
 *
 *}
 <p class="dotpay"><img src="{$module_dir}/img/dotpay_logo_napisPL.png" /><img width="128" height="128" src="{$module_dir}/img/loading2.gif" /></p>
-<p class="dotpay">{l s='Please wait for payment confirmation.' mod='dotpay'}</p>
+<p class="dotpay">{l s='Please wait for payment confirmation.' mod='dotpay'}</p><br/><br/>
 <form action="{$form_url}" method="post" id="dpForm" name="dpForm" target="_parent">
 {foreach from=$params key=k item=v}
-<input type="hidden" name="{$k}" value="{$v}"/>
+<input type="hidden" name="{$k|escape}" value="{$v|escape}"/>
 {/foreach}
 </form>
 {literal}
