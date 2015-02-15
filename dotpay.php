@@ -37,7 +37,7 @@ class dotpay extends PaymentModule
 	{
 		$this->name = 'dotpay';
 		$this->tab = 'payments_gateways';
-		$this->version = '1.3.7';
+		$this->version = '1.3.8';
                 $this->author = 'tech@dotpay.pl';
 
 		parent::__construct();

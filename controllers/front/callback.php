@@ -66,7 +66,9 @@ class dotpaycallbackModuleFrontController extends ModuleFrontController
                                         $dotpay_amount = round(Tools::getValue('orginal_amount'),2);
                                         if ($totalAmount <> $dotpay_amount) 
                                                 die('INCORRECT AMOUNT '.$totalAmount.' <> '.$dotpay_amount);                                        
-                                        
+                                      
+                                        if (strpos($totalAmount, ".") == false)
+                                                $totalAmount .= ".00";
                                         $currency = Currency::getCurrency($cart->id_currency);
                                         $totalAmount .= " ".$currency["iso_code"];
                                         $orginal_amount = trim(Tools::getValue('orginal_amount'));
