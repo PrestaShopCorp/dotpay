@@ -49,7 +49,7 @@ class dotpaycallbackModuleFrontController extends ModuleFrontController
                                     case 5:
                                         $actual_state = Configuration::get('PAYMENT_DOTPAY_COMPLAINT_STATUS');   
                                     default:
-                                        die ("WRONG TRANSACTION STATUS");
+                                        die ("PrestaShop - WRONG TRANSACTION STATUS");
                                 }
                                 $cart = new Cart((int)Tools::getValue('control'));
                                 //$address = new Address($cart->id_address_invoice);
@@ -65,7 +65,7 @@ class dotpaycallbackModuleFrontController extends ModuleFrontController
                                         $totalAmount = round(Db::getInstance()->getValue($sql),2);
                                         $dotpay_amount = round(Tools::getValue('orginal_amount'),2);
                                         if ($totalAmount <> $dotpay_amount) 
-                                                die('INCORRECT AMOUNT '.$totalAmount.' <> '.$dotpay_amount);                                        
+                                                die('PrestaShop - INCORRECT AMOUNT '.$totalAmount.' <> '.$dotpay_amount);                                        
                                       
                                         if (strpos($totalAmount, ".") == false)
                                                 $totalAmount .= ".00";
@@ -73,20 +73,20 @@ class dotpaycallbackModuleFrontController extends ModuleFrontController
                                         $totalAmount .= " ".$currency["iso_code"];
                                         $orginal_amount = trim(Tools::getValue('orginal_amount'));
                                         if ($totalAmount <> $orginal_amount) 
-                                                die('INCORRECT ORG. AMOUNT '.$totalAmount.' <> '.$orginal_amount);
+                                                die('PrestaShop - INCORRECT ORG. AMOUNT '.$totalAmount.' <> '.$orginal_amount);
 
                                         $history = new OrderHistory();
                                         $history->id_order = $order_id;
                                         if ( OrderHistory::getLastOrderState($order_id) == _PS_OS_PAYMENT_ ) 
                                         {
-                                                die('WRONG STATE');
+                                                die('PrestaShop - WRONG STATE');
                                         } else {
                                                 $history->changeIdOrderState($actual_state, $order_id);
                                                 $history->addWithemail(true);
                                                 die ("OK");
                                         }
-                                } else die('NO MATCHING ORDER');
-                        } else die ("LEGACY MD5 ERROR - CHECK PIN");
-                } else die("ERROR");
+                                } else die('PrestaShop - NO MATCHING ORDER');
+                        } else die ("PrestaShop - LEGACY MD5 ERROR - CHECK PIN");
+                } else die("PrestaShop - ERROR");
         }
 }
