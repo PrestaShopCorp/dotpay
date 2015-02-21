@@ -51,12 +51,12 @@
 <div class="panel"><div class="dotpay-config-state">
     <h3>{l s='Configuration state' mod='dotpay'}</h3>
     {if $DOTPAY_CONFIGURATION_OK}
-        <table><tr><td><img width="100" height="100" src="{$module_dir}/img/tick.jpg"></td><td><p>
+        <table><tr><td><img width="100" height="100" src="{$module_dir}img/tick.png"></td><td><p>
         <p>{l s='Module is active. If you do not recive payment information, please chcek URLC configuration.' mod='dotpay'}</p>
         <p>{if $DP_TEST}{l s='Module is in TEST mode. All payment informations are fake!' mod='dotpay'}{/if}</p>
         </p></td></tr></table>
     {else}
-        <table><tr><td><img width="100" height="100" src="{$module_dir}/img/cross.jpg"></td><td>
+        <table><tr><td><img width="100" height="100" src="{$module_dir}img/cross.png"></td><td>
         <p>{l s='Module is not active. Please check yours configuration.' mod='dotpay'}</p>
         <p>{l s='ID and PIN can be found in Dotpay panel in Settings on the top bar. ID number is a 6-digit string placed after # in a “Shop” line.' mod='dotpay'}</p>
         </p></td></tr></table>
