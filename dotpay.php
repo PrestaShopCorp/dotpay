@@ -37,7 +37,7 @@ class dotpay extends PaymentModule
 	{
 		$this->name = 'dotpay';
 		$this->tab = 'payments_gateways';
-		$this->version = '1.4.0';
+		$this->version = '1.4.1';
                 $this->author = 'tech@dotpay.pl';
 
 		parent::__construct();
@@ -82,6 +82,7 @@ class dotpay extends PaymentModule
     {
 	
         Configuration::updateValue('DP_TEST', true);
+        Configuration::updateValue('DP_CHK', false);
         Configuration::updateValue('DP_ID', self::DOTPAY_PAYMENTS_TEST_CUSTOMER);
         Configuration::updateValue('DP_PIN', self::DOTPAY_PAYMENTS_TEST_CUSTOMER_PIN);
         Configuration::updateValue('DOTPAY_CONFIGURATION_OK', true);
@@ -109,6 +110,7 @@ class dotpay extends PaymentModule
         Configuration::deleteByName('DP_ID');
         Configuration::deleteByName('DP_PIN');
         Configuration::deleteByName('DP_TEST');
+        Configuration::deleteByName('DP_CHK');
         Configuration::deleteByName('PAYMENT_DOTPAY_NEW_STATUS');
         Configuration::deleteByName('PAYMENT_DOTPAY_COMPLAINT_STATUS');
         Configuration::deleteByName('DOTPAY_CONFIGURATION_OK');
@@ -196,6 +198,25 @@ class dotpay extends PaymentModule
 						),
 					),
 					array(
+						'type' => 'switch',
+                                           	'label' => $this->l('CHK mode'),
+						'name' => 'DP_CHK',
+                                                'desc' => $this->l('Secure payment parameters'),
+						'is_bool' => true,
+						'values' => array(
+							array(
+								'id' => 'active_on',
+								'value' => true,
+								'label' => $this->l('Enabled')
+							),
+							array(
+								'id' => 'active_off',
+								'value' => false,
+								'label' => $this->l('Disabled')
+							)
+						),
+					),                                    
+					array(
 						'type' => 'text',
 						'name' => 'DP_ID',
 						'label' => $this->l('ID'),
@@ -220,6 +241,7 @@ class dotpay extends PaymentModule
 	{
 		return array(
 			'DP_TEST' => Configuration::get('DP_TEST', false),
+                        'DP_CHK'  => Configuration::get('DP_CHK', false),
 			'DP_ID' => Configuration::get('DP_ID'),
 			'DP_PIN' => Configuration::get('DP_PIN'),
 		);
