@@ -9,7 +9,7 @@ PrestaShop dotpay payment module
 1. Pobierz wtyczkę dotpay.zip (https://github.com/dotpay/PrestaShop/releases/latest)
 2. Zaloguj się do panelu administracyjnego PrestaShop i kliknij "MODUŁY"
 3. W prawym górym rogu ekranu kliknij "Dodaj nowy moduł", a następnie wskaż pobrany plik z wtyczką.
-4. Kofigurację zminiesz w sekcji "Moduły" klikając "Konfiguruj" obok modułu dotpay.
+4. Kofigurację można zmienić w sekcji "Moduły" klikając "Konfiguruj" obok modułu dotpay.
 
 ---------------------------------------
 
