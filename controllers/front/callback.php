@@ -68,7 +68,7 @@ class dotpaycallbackModuleFrontController extends ModuleFrontController
             default:
                 die ("PrestaShop - WRONG TRANSACTION STATUS");
         }
-        
+		
         if($cart->OrderExists() == false)
         {
             $this->module->validateOrder($cart->id, $actual_state, $total, $this->module->displayName, NULL, array(), (int)$cart->id_currency, false, $customer->secure_key);
@@ -76,12 +76,12 @@ class dotpaycallbackModuleFrontController extends ModuleFrontController
         }
         else
         {
-            $order_id = Order::getOrderByCartId((int)Tools::getValue('control'));
             $history = new OrderHistory();
-            $history->id_order = $order_id;
-            if(OrderHistory::getLastOrderState($order_id) <> $actual_state)
+            $history->id_order = Order::getOrderByCartId((int)Tools::getValue('control'));
+            $lastOrderState = OrderHistory::getLastOrderState($history->id_order);
+            if($lastOrderState->id <> $actual_state)
             {
-                $history->changeIdOrderState($actual_state, $order_id);
+                $history->changeIdOrderState($actual_state, $history->id_order);
                 $history->addWithemail(true);
             }
             echo("OK");
