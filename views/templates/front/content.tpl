@@ -62,3 +62,44 @@
         </p></td></tr></table>
     {/if}
 </div></div>
+
+<h2>Dotpay</h2>
+<form action='{$DP_URI}' method='post'>
+<input type="radio" name="DP_TEST" value="0" {if $DP_TEST eq '0'}checked="checked"{/if}>{l s='Production environment' mod='dotpay'}<br>
+<input type="radio" name="DP_TEST" value="1" {if $DP_TEST eq '1'}checked="checked"{/if}>{l s='Testing environment' mod='dotpay'}<br><br>
+<input type="radio" name="DP_CHK" value="1" {if $DP_CHK eq '1'}checked="checked"{/if}>{l s='CHK Blockade ON' mod='dotpay'}<br>
+<input type="radio" name="DP_CHK" value="0" {if $DP_CHK eq '0'}checked="checked"{/if}>{l s='CHK Blockade OFF' mod='dotpay'}<br><br>
+ID : <input type='text' name='DP_ID' value='{$DP_ID}'/>
+PIN : <input type='text' name='DP_PIN' value='{$DP_PIN}'/> <br><br>
+<input type='submit' name='submitDotpayModule' value='Zapisz' /><br>
+<p>{$DP_MSG}</p>
+<br><br>
+</form>
+{literal}
+<style type="text/css">
+.tg  {border-collapse:collapse;border-spacing:0;}
+.tg td{font-family:Arial, sans-serif;font-size:14px;padding:10px 5px;border-style:solid;border-width:1px;overflow:hidden;word-break:normal;}
+.tg th{font-family:Arial, sans-serif;font-size:14px;font-weight:normal;padding:10px 5px;border-style:solid;border-width:1px;overflow:hidden;word-break:normal;}
+.tg .tg-s6z2{text-align:center}
+.tg .tg-vkov{background-color:#32cb00;text-align:center}
+.tg .tg-pn40{background-color:#fe0000;text-align:center}
+.tg .tg-vl7g{background-color:#fe0000;color:#000000;text-align:center}
+</style>
+{/literal}
+<table class="tg">
+  <tr>
+    <th class="tg-s6z2">Moduł aktywny<br></th>
+    {if $DOTPAY_CONFIGURATION_OK eq '1'}<th class="tg-vkov">True</th>{/if}
+    {if $DOTPAY_CONFIGURATION_OK eq '0'}<td class="tg-pn40">False</td>{/if}
+  </tr>
+  <tr>
+    <td class="tg-s6z2">Środowisko produkcyjne</td>
+    {if $DP_TEST eq '0'}<th class="tg-vkov">True</th>{/if}
+    {if $DP_TEST eq '1'}<td class="tg-pn40">False</td>{/if}
+  </tr>
+  <tr>
+    <td class="tg-s6z2">Tryb CHK</td>
+    {if $DP_CHK eq '1'}<th class="tg-vkov">True</th>{/if}
+    {if $DP_CHK eq '0'}<td class="tg-pn40">False</td>{/if}
+  </tr>
+</table>
