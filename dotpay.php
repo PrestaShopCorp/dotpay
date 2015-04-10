@@ -37,7 +37,7 @@ class dotpay extends PaymentModule
 	{
 		$this->name = 'dotpay';
 		$this->tab = 'payments_gateways';
-		$this->version = '0.9.0';
+		$this->version = '0.9.1';
                 $this->author = 'tech@dotpay.pl';
 
 		parent::__construct();
@@ -145,7 +145,7 @@ class dotpay extends PaymentModule
                 'DP_MSG' => $this->_dpConfigForm,
                 'DP_URI' => $_SERVER['REQUEST_URI']
             ));*/
-            return $this->display(__FILE__, 'content.tpl');
+            return $this->display(__FILE__, 'views/templates/admin/content.tpl');
         } 
 
 	/**
