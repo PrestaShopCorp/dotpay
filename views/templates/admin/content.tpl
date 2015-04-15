@@ -69,6 +69,8 @@
 <input type="radio" name="DP_TEST" value="1" {if $DP_TEST eq '1'}checked="checked"{/if}>{l s='Testing environment' mod='dotpay'}<br><br>
 <input type="radio" name="DP_CHK" value="1" {if $DP_CHK eq '1'}checked="checked"{/if}>{l s='CHK Blockade ON' mod='dotpay'}<br>
 <input type="radio" name="DP_CHK" value="0" {if $DP_CHK eq '0'}checked="checked"{/if}>{l s='CHK Blockade OFF' mod='dotpay'}<br><br>
+<input type="radio" name="DP_CHK" value="1" {if $DP_SSL eq '1'}checked="checked"{/if}>{l s='SSL ON' mod='dotpay'}<br>
+<input type="radio" name="DP_CHK" value="0" {if $DP_SSL eq '0'}checked="checked"{/if}>{l s='SSL OFF' mod='dotpay'}<br><br>
 ID : <input type='text' name='DP_ID' value='{$DP_ID}'/>
 PIN : <input type='text' name='DP_PIN' value='{$DP_PIN}'/> <br><br>
 <input type='submit' name='submitDotpayModule' value='Zapisz' /><br>
@@ -102,4 +104,9 @@ PIN : <input type='text' name='DP_PIN' value='{$DP_PIN}'/> <br><br>
     {if $DP_CHK eq '1'}<th class="tg-vkov">True</th>{/if}
     {if $DP_CHK eq '0'}<td class="tg-pn40">False</td>{/if}
   </tr>
+  <tr>
+    <td class="tg-s6z2">SSL</td>
+    {if $DP_SSL eq '1'}<th class="tg-vkov">True</th>{/if}
+    {if $DP_SSL eq '0'}<td class="tg-pn40">False</td>{/if}
+  </tr>  
 </table>

@@ -45,7 +45,7 @@ class dotpaypaymentModuleFrontController extends ModuleFrontController
         if ($cart->OrderExists() == true) 
             Tools::redirect('index.php?controller=order-confirmation&id_cart='.$cart->id.'&id_module='.$this->module->id.'&id_order='.Order::getOrderByCartId($cart->id).'&key='.$customer->secure_key);                    
         elseif (Tools::getValue("status") == "OK")
-            $form_url= $this->context->link->getModuleLink('dotpay', 'payment', array('control' => $cart->id, 'status' => 'OK'));
+            $form_url = $this->context->link->getModuleLink('dotpay', 'payment', array('control' => $cart->id, 'status' => 'OK'), Configuration::get('DP_SSL', false));
         else 
         {
             // Check that this payment option is still available in case the customer changed his address just before the end of the checkout process
@@ -67,9 +67,9 @@ class dotpaypaymentModuleFrontController extends ModuleFrontController
                     'amount' => (float)$cart->getOrderTotal(true, Cart::BOTH),
                     'currency' => $currency["iso_code"],
                     'description' => Configuration::get('PS_SHOP_NAME'), 
-                    'url' => $this->context->link->getModuleLink('dotpay', 'payment', array('control' => $cart->id)),                        
+                    'url' => $this->context->link->getModuleLink('dotpay', 'payment', array('control' => $cart->id), Configuration::get('DP_SSL', false)),                        
                     'type' => 0,                        
-                    'urlc' => $this->context->link->getModuleLink('dotpay', 'callback', array('ajax' => '1')),
+                    'urlc' => $this->context->link->getModuleLink('dotpay', 'callback', array('ajax' => '1'), Configuration::get('DP_SSL', false)),
                     'control' => $cart->id,
                     'firstname' => $customer->firstname,
                     'lastname' => $customer->lastname,                        
