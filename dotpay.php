@@ -37,7 +37,7 @@ class dotpay extends PaymentModule
 	{
 		$this->name = 'dotpay';
 		$this->tab = 'payments_gateways';
-		$this->version = '1.4.6';
+		$this->version = '1.4.7';
                 $this->author = 'tech@dotpay.pl';
 
 		parent::__construct();
@@ -132,8 +132,8 @@ class dotpay extends PaymentModule
                 'module_dir' => $this->_path,
                 'DOTPAY_CONFIGURATION_OK' => Configuration::get('DOTPAY_CONFIGURATION_OK', false),
                 'DP_URLC' => $this->context->link->getModuleLink('dotpay', 'callback', array('ajax' => '1')),
-                'DP_MSG' => $this->_dpConfigForm,
-                'DP_URI' => $_SERVER['REQUEST_URI']
+                'DP_URI' => $_SERVER['REQUEST_URI'],
+                'SSL_ENABLED' => Configuration::get('PS_SSL_ENABLED')
             ));
             $form_values = $this->getConfigFormValues();
             foreach ($form_values as $key => $value)
@@ -295,17 +295,26 @@ class dotpay extends PaymentModule
 	*/
 	public function hookBackOfficeHeader()
 	{
+            if (version_compare(_PS_VERSION_, "1.5.0.1", ">=")) {
 		$this->context->controller->addJS($this->_path.'js/back.js');
 		$this->context->controller->addCSS($this->_path.'css/back.css');
+            } else {
+                ToolsCore::addJS($this->_path.'/js/back.js');
+                ToolsCore::addCSS($this->_path.'/css/back.css');
+            }                        
 	}
-
 	/**
 	 * Add the CSS & JavaScript files you want to be added on the FO.
 	 */
 	public function hookHeader()
 	{
+            if (version_compare(_PS_VERSION_, "1.5.0.1", ">=")) {
 		$this->context->controller->addJS($this->_path.'/js/front.js');
 		$this->context->controller->addCSS($this->_path.'/css/front.css');
+            } else {
+                ToolsCore::addJS($this->_path.'/js/front.js');
+                ToolsCore::addCSS($this->_path.'/css/front.css');
+            }
 	}
 
     public function hookPayment()

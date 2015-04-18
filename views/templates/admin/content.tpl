@@ -65,16 +65,15 @@
 
 <h2>Dotpay</h2>
 <form action='{$DP_URI}' method='post'>
-<input type="radio" name="DP_TEST" value="0" {if $DP_TEST eq '0'}checked="checked"{/if}>{l s='Production environment' mod='dotpay'}<br>
-<input type="radio" name="DP_TEST" value="1" {if $DP_TEST eq '1'}checked="checked"{/if}>{l s='Testing environment' mod='dotpay'}<br><br>
-<input type="radio" name="DP_CHK" value="1" {if $DP_CHK eq '1'}checked="checked"{/if}>{l s='CHK Blockade ON' mod='dotpay'}<br>
-<input type="radio" name="DP_CHK" value="0" {if $DP_CHK eq '0'}checked="checked"{/if}>{l s='CHK Blockade OFF' mod='dotpay'}<br><br>
-<input type="radio" name="DP_CHK" value="1" {if $DP_SSL eq '1'}checked="checked"{/if}>{l s='SSL ON' mod='dotpay'}<br>
-<input type="radio" name="DP_CHK" value="0" {if $DP_SSL eq '0'}checked="checked"{/if}>{l s='SSL OFF' mod='dotpay'}<br><br>
+<input type="radio" name="DP_TEST" value="0" {if $DP_TEST eq '0' || $DP_TEST eq false}checked="checked"{/if}>{l s='Production environment' mod='dotpay'}<br>
+<input type="radio" name="DP_TEST" value="1" {if $DP_TEST eq '1' || $DP_TEST eq true}checked="checked"{/if}>{l s='Testing environment' mod='dotpay'}<br><br>
+<input type="radio" name="DP_CHK" value="1" {if $DP_CHK  eq '1' || $DP_CHK eq true}checked="checked"{/if}>{l s='CHK Blockade ON' mod='dotpay'}<br>
+<input type="radio" name="DP_CHK" value="0" {if $DP_CHK  eq '0' || $DP_CHK eq false}checked="checked"{/if}>{l s='CHK Blockade OFF' mod='dotpay'}<br><br>
+<input type="radio" name="DP_SSL" value="1" {if $DP_SSL  eq '1' || $DP_SSL eq true}checked="checked"{/if}>{l s='SSL ON' mod='dotpay'}<br>
+<input type="radio" name="DP_SSL" value="0" {if $DP_SSL  eq '0' || $DP_SSL eq false}checked="checked"{/if}>{l s='SSL OFF' mod='dotpay'}<br><br>
 ID : <input type='text' name='DP_ID' value='{$DP_ID}'/>
 PIN : <input type='text' name='DP_PIN' value='{$DP_PIN}'/> <br><br>
 <input type='submit' name='submitDotpayModule' value='Zapisz' /><br>
-<p>{$DP_MSG}</p>
 <br><br>
 </form>
 {literal}
@@ -91,22 +90,27 @@ PIN : <input type='text' name='DP_PIN' value='{$DP_PIN}'/> <br><br>
 <table class="tg">
   <tr>
     <th class="tg-s6z2">Moduł aktywny<br></th>
-    {if $DOTPAY_CONFIGURATION_OK eq '1'}<th class="tg-vkov">True</th>{/if}
-    {if $DOTPAY_CONFIGURATION_OK eq '0'}<td class="tg-pn40">False</td>{/if}
+    {if $DOTPAY_CONFIGURATION_OK eq '1' || $DOTPAY_CONFIGURATION_OK eq true}<th class="tg-vkov">True</th>{/if}
+    {if $DOTPAY_CONFIGURATION_OK eq '0' || $DOTPAY_CONFIGURATION_OK eq false}<td class="tg-pn40">False</td>{/if}
   </tr>
   <tr>
     <td class="tg-s6z2">Środowisko produkcyjne</td>
-    {if $DP_TEST eq '0'}<th class="tg-vkov">True</th>{/if}
-    {if $DP_TEST eq '1'}<td class="tg-pn40">False</td>{/if}
+    {if $DP_TEST eq '0' || $DP_TEST eq false}<th class="tg-vkov">True</th>{/if}
+    {if $DP_TEST eq '1' || $DP_TEST eq true}<td class="tg-pn40">False</td>{/if}
   </tr>
   <tr>
     <td class="tg-s6z2">Tryb CHK</td>
-    {if $DP_CHK eq '1'}<th class="tg-vkov">True</th>{/if}
-    {if $DP_CHK eq '0'}<td class="tg-pn40">False</td>{/if}
+    {if $DP_CHK eq '1' || $DP_CHK eq true}<th class="tg-vkov">True</th>{/if}
+    {if $DP_CHK eq '0' || $DP_CHK eq false}<td class="tg-pn40">False</td>{/if}
   </tr>
+    <tr>
+    <td class="tg-s6z2">Aktywacja SSL w sklepie<br>(Preferencje->Ogólny)</td>
+    {if $SSL_ENABLED eq '1' || $SSL_ENABLED eq true}<th class="tg-vkov">True</th>{/if}
+    {if $SSL_ENABLED eq '0' || $SSL_ENABLED eq false}<td class="tg-pn40">False</td>{/if}
+  </tr>  
   <tr>
-    <td class="tg-s6z2">SSL</td>
-    {if $DP_SSL eq '1'}<th class="tg-vkov">True</th>{/if}
-    {if $DP_SSL eq '0'}<td class="tg-pn40">False</td>{/if}
+  <td class="tg-s6z2">Aktywacja SSL w module</td>
+    {if $DP_SSL eq '1' || $DP_SSL eq true}<th class="tg-vkov">True</th>{/if}
+    {if $DP_SSL eq '0' || $DP_SSL eq false}<td class="tg-pn40">False</td>{/if}
   </tr>  
 </table>
