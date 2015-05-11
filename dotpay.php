@@ -37,7 +37,7 @@ class dotpay extends PaymentModule
 	{
 		$this->name = 'dotpay';
 		$this->tab = 'payments_gateways';
-		$this->version = '1.4.7';
+		$this->version = '1.4.8';
                 $this->author = 'tech@dotpay.pl';
 
 		parent::__construct();
@@ -279,17 +279,18 @@ class dotpay extends PaymentModule
 	 */
 	protected function _postProcess()
 	{
-            $values = $this->getConfigFormValues();
-            if (Tools::getValue("submitDotpayModule", false) && is_numeric($values["DP_ID"]) && !empty($values["DP_PIN"])) {
+            if (Tools::isSubmit('submitDotpayModule')) 
+            {
+                $values = $this->getConfigFormValues();
                 foreach (array_keys($values) as $key)
                     $values[$key] = trim(Tools::getValue($key));
-                $values["DOTPAY_CONFIGURATION_OK"] = true;
                 $values["DP_SSL"] = Configuration::get('PS_SSL_ENABLED') && Tools::getValue("DP_SSL");               
+                $values["DOTPAY_CONFIGURATION_OK"] = !empty($values["DP_PIN"]) && is_numeric($values["DP_ID"]);
+                if ($values["DOTPAY_CONFIGURATION_OK"] && strlen($values["DP_ID"]) < 6) $values["DP_TEST"] = false;
+                foreach ($values as $key => $value)
+                    Configuration::updateValue($key, $value);
             }
-            foreach ($values as $key => $value)
-                Configuration::updateValue($key, $value);
         }
-
 	/**
 	* Add the CSS & JavaScript files you want to be loaded in the BO.
 	*/
