@@ -22,7 +22,7 @@
 *  @license   http://opensource.org/licenses/afl-3.0.php  Academic Free License (AFL 3.0)
 *
 *}
-<p class="dotpay"><img src="{$module_dir}img/dotpay_logo_napisPL.png" /><img width="128" height="128" src="{$module_dir}img/loading2.gif" /></p>
+<p class="dotpay"><img src="{$module_dir}img/Dotpay_logo_napis{if $lang_iso == 'pl'}_pl{else}_en{/if}.png" /><img width="128" height="128" src="{$module_dir}img/loading2.gif" /></p>
 <p class="dotpay">{l s='Please wait for payment confirmation.' mod='dotpay'}</p><br/><br/>
 <form action="{$form_url}" method="post" id="dpForm" name="dpForm" target="_parent">
 {foreach from=$params key=k item=v}

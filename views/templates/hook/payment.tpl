@@ -22,9 +22,13 @@
 *  @license   http://opensource.org/licenses/afl-3.0.php  Academic Free License (AFL 3.0)
 *
 *}
-<p class="payment_module">
-	<a href="{$link->getModuleLink('dotpay', 'payment')|escape:'html'}" title="{l s='Pay by dotpay' mod='dotpay'}">
-                            <img src="{$module_dir}img/Logo Dotpay_147x56.jpg" alt="{l s='Pay by dotpay' mod='dotpay'}" />
-		{l s='Pay by dotpay' mod='dotpay'}
-            </a>
-</p>
+<div class="row">
+	<div class="col-xs-12">
+		<p class="payment_module">
+			<a href="{$link->getModuleLink('dotpay', 'payment')|escape:'html'}" title="{l s='Pay by dotpay' mod='dotpay'}">
+			<img src="{$module_dir}img/Logo_Dotpay_147x56.jpg" alt="{l s='Pay by dotpay' mod='dotpay'}" />
+				{l s='Pay by dotpay' mod='dotpay'}
+					</a>
+		</p>
+    </div>
+</div>

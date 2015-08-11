@@ -33,7 +33,7 @@ class dotpaycallbackModuleFrontController extends ModuleFrontController
             die("PrestaShop - M.Ver: ".$this->module->version.", P.Ver: ". _PS_VERSION_ .", ID: ".Configuration::get('DP_ID').", Active: ".Configuration::get('DOTPAY_CONFIGURATION_OK').", Test: ".Configuration::get('DP_TEST').", CHK: ".Configuration::get('DP_CHK'));        
         
         if($_SERVER['REMOTE_ADDR'] <> '195.150.9.37' or $_SERVER['REQUEST_METHOD'] <> 'POST') 
-            die("PrestaShop - ERROR");
+			die("PrestaShop - ERROR (REMOTE ADDRESS: ".$_SERVER['REMOTE_ADDR'].")");  //change 2015-08-03 add IP
 
         if(!Dotpay::check_urlc_legacy())
             die("PrestaShop - LEGACY MD5 ERROR - CHECK PIN");
@@ -42,7 +42,7 @@ class dotpaycallbackModuleFrontController extends ModuleFrontController
         $customer = new Customer((int)$cart->id_customer);
         $currency = Currency::getCurrency((int)$cart->id_currency);
         $total = (float)$cart->getOrderTotal();
-        $price = number_format($total, 2);
+		$price = number_format($total, 2,'.', ''); //change: 2015-07-31
         $price .= " ".$currency["iso_code"];
         $orginal_amount = trim(Tools::getValue('orginal_amount'));
 
