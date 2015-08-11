@@ -37,7 +37,7 @@ class dotpay extends PaymentModule
 	{
 		$this->name = 'dotpay';
 		$this->tab = 'payments_gateways';
-		$this->version = '1.4.8a';
+		$this->version = '1.4.9';
                 $this->author = 'tech@dotpay.pl';
 
 		parent::__construct();
@@ -286,7 +286,7 @@ class dotpay extends PaymentModule
                     $values[$key] = trim(Tools::getValue($key));
                 $values["DP_SSL"] = Configuration::get('PS_SSL_ENABLED') && Tools::getValue("DP_SSL");               
                 $values["DOTPAY_CONFIGURATION_OK"] = !empty($values["DP_PIN"]) && is_numeric($values["DP_ID"]);
-                if ($values["DOTPAY_CONFIGURATION_OK"] && strlen($values["DP_ID"]) < 6) $values["DP_TEST"] = false;
+                if ($values["DOTPAY_CONFIGURATION_OK"] && Tools::strlen($values["DP_ID"]) < 6) $values["DP_TEST"] = false;
                 foreach ($values as $key => $value)
                     Configuration::updateValue($key, $value);
             }
