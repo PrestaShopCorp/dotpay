@@ -13,7 +13,7 @@ PrestaShop dotpay payment module
 
 ---------------------------------------
 
-####PrestaShop plugin adding form based dotpay payment gateway####
+####PrestaShop plugin adding dotpay payment gateway####
 
 ### Instructions: ###
 1. Download the plugin dotpay.zip (https://github.com/dotpay/PrestaShop/releases/latest)
