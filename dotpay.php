@@ -19,7 +19,7 @@
 * needs please refer to http://www.prestashop.com for more information.
 *
 *  @author    Piotr Karecki <tech@dotpay.pl>
-*  @copyright dotpay
+*  @copyright Dotpay
 *  @license   http://opensource.org/licenses/afl-3.0.php  Academic Free License (AFL 3.0)
 *
 */
@@ -29,8 +29,8 @@ if (!defined('_PS_VERSION_'))
 
 class dotpay extends PaymentModule
 {
-    	const DOTPAY_PAYMENTS_TEST_CUSTOMER = '701169';
-        const DOTPAY_PAYMENTS_TEST_CUSTOMER_PIN = 'CNiqWSUnfMaeEyWT3mwZch8xl2IbKv9U';
+    	const DOTPAY_PAYMENTS_TEST_CUSTOMER = '';
+        const DOTPAY_PAYMENTS_TEST_CUSTOMER_PIN = '';
 	protected $config_form = false;
 
 	public function __construct()
@@ -80,13 +80,12 @@ class dotpay extends PaymentModule
     
     public function install()
     {
-	
-        Configuration::updateValue('DP_TEST', true);
+        Configuration::updateValue('DP_TEST', false);
         Configuration::updateValue('DP_CHK', false);
         Configuration::updateValue('DP_SSL', false);
         Configuration::updateValue('DP_ID', self::DOTPAY_PAYMENTS_TEST_CUSTOMER);
         Configuration::updateValue('DP_PIN', self::DOTPAY_PAYMENTS_TEST_CUSTOMER_PIN);
-        Configuration::updateValue('DOTPAY_CONFIGURATION_OK', true);
+        Configuration::updateValue('DOTPAY_CONFIGURATION_OK', false);
         return 
             parent::install() &&
             $this->registerHook('header') &&
