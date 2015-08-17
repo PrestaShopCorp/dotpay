@@ -19,7 +19,7 @@
 * needs please refer to http://www.prestashop.com for more information.
 *
 *  @author    Piotr Karecki <tech@dotpay.pl>
-*  @copyright dotpay
+*  @copyright Dotpay
 *  @license   http://opensource.org/licenses/afl-3.0.php  Academic Free License (AFL 3.0)
 *
 */
@@ -29,15 +29,15 @@ if (!defined('_PS_VERSION_'))
 
 class dotpay extends PaymentModule
 {
-    	const DOTPAY_PAYMENTS_TEST_CUSTOMER = '701169';
-        const DOTPAY_PAYMENTS_TEST_CUSTOMER_PIN = 'CNiqWSUnfMaeEyWT3mwZch8xl2IbKv9U';
+    	const DOTPAY_PAYMENTS_TEST_CUSTOMER = '';
+        const DOTPAY_PAYMENTS_TEST_CUSTOMER_PIN = '';
 	protected $config_form = false;
 
 	public function __construct()
 	{
 		$this->name = 'dotpay';
 		$this->tab = 'payments_gateways';
-		$this->version = '1.4.0';
+		$this->version = '1.4.9';
                 $this->author = 'tech@dotpay.pl';
 
 		parent::__construct();
@@ -80,11 +80,12 @@ class dotpay extends PaymentModule
     
     public function install()
     {
-	
-        Configuration::updateValue('DP_TEST', true);
+        Configuration::updateValue('DP_TEST', false);
+        Configuration::updateValue('DP_CHK', false);
+        Configuration::updateValue('DP_SSL', false);
         Configuration::updateValue('DP_ID', self::DOTPAY_PAYMENTS_TEST_CUSTOMER);
         Configuration::updateValue('DP_PIN', self::DOTPAY_PAYMENTS_TEST_CUSTOMER_PIN);
-        Configuration::updateValue('DOTPAY_CONFIGURATION_OK', true);
+        Configuration::updateValue('DOTPAY_CONFIGURATION_OK', false);
         return 
             parent::install() &&
             $this->registerHook('header') &&
@@ -109,6 +110,8 @@ class dotpay extends PaymentModule
         Configuration::deleteByName('DP_ID');
         Configuration::deleteByName('DP_PIN');
         Configuration::deleteByName('DP_TEST');
+        Configuration::deleteByName('DP_CHK');
+        Configuration::deleteByName('DP_SSL');
         Configuration::deleteByName('PAYMENT_DOTPAY_NEW_STATUS');
         Configuration::deleteByName('PAYMENT_DOTPAY_COMPLAINT_STATUS');
         Configuration::deleteByName('DOTPAY_CONFIGURATION_OK');
@@ -121,20 +124,25 @@ class dotpay extends PaymentModule
 	/**
 	 * Load the configuration form
 	 */
-	public function getContent()
-	{
-                $this->_postProcess();
-		$this->context->smarty->assign(array(
-                    'module_dir' => $this->_path,
-                    'DP_TEST' => Configuration::get('DP_TEST', false),
-                    'DOTPAY_CONFIGURATION_OK' => Configuration::get('DOTPAY_CONFIGURATION_OK', false),
-                    'DP_URLC' => $this->context->link->getModuleLink('dotpay', 'callback', array('ajax' => '1'))
-                        ));
-
-		$output = $this->context->smarty->fetch($this->local_path.'views/templates/admin/configure.tpl');
-
-		return $output.$this->renderForm();
-	}
+        public function getContent()
+        {
+            $this->_postProcess();
+            $this->context->smarty->assign(array(
+                'module_dir' => $this->_path,
+                'DOTPAY_CONFIGURATION_OK' => Configuration::get('DOTPAY_CONFIGURATION_OK', false),
+                'DP_URLC' => $this->context->link->getModuleLink('dotpay', 'callback', array('ajax' => '1')),
+                'DP_URI' => $_SERVER['REQUEST_URI'],
+                'SSL_ENABLED' => Configuration::get('PS_SSL_ENABLED')
+            ));
+            $form_values = $this->getConfigFormValues();
+            foreach ($form_values as $key => $value)
+                $this->context->smarty->assign($key, $value);
+            if (version_compare(_PS_VERSION_, "1.6.0", ">=")) {
+                $output = $this->context->smarty->fetch($this->local_path.'views/templates/admin/configure.tpl');
+                return $output.$this->renderForm();
+            } else 
+                return $this->display(__FILE__, 'views/templates/admin/content.tpl');
+        } 
 
 	/**
 	 * Create the form that will be displayed in the configuration of your module.
@@ -195,6 +203,44 @@ class dotpay extends PaymentModule
 							)
 						),
 					),
+                                        array(
+						'type' => 'switch',
+                                           	'label' => $this->l('Use SSL'),
+						'name' => 'DP_SSL',
+                                                'desc' => $this->l('Secure Sockets Layer cryptographic protocol'),
+						'is_bool' => true,
+						'values' => array(
+							array(
+								'id' => 'active_on',
+								'value' => true,
+								'label' => $this->l('Enabled')
+							),
+							array(
+								'id' => 'active_off',
+								'value' => false,
+								'label' => $this->l('Disabled')
+							)
+						),
+					),                                                                        
+                                        array(
+						'type' => 'switch',
+                                           	'label' => $this->l('CHK mode'),
+						'name' => 'DP_CHK',
+                                                'desc' => $this->l('Secure payment parameters'),
+						'is_bool' => true,
+						'values' => array(
+							array(
+								'id' => 'active_on',
+								'value' => true,
+								'label' => $this->l('Enabled')
+							),
+							array(
+								'id' => 'active_off',
+								'value' => false,
+								'label' => $this->l('Disabled')
+							)
+						),
+					),                                    
 					array(
 						'type' => 'text',
 						'name' => 'DP_ID',
@@ -220,6 +266,8 @@ class dotpay extends PaymentModule
 	{
 		return array(
 			'DP_TEST' => Configuration::get('DP_TEST', false),
+			'DP_CHK'  => Configuration::get('DP_CHK', false),
+			'DP_SSL'  => Configuration::get('DP_SSL', false),
 			'DP_ID' => Configuration::get('DP_ID'),
 			'DP_PIN' => Configuration::get('DP_PIN'),
 		);
@@ -230,33 +278,43 @@ class dotpay extends PaymentModule
 	 */
 	protected function _postProcess()
 	{
-            if(Tools::getValue("submitDotpayModule", false) == false) return;
-            Configuration::updateValue('DOTPAY_CONFIGURATION_OK', false);
-            $form_values = $this->getConfigFormValues();
-            foreach (array_keys($form_values) as $key)
-                    $values[$key] = Tools::getValue($key);
-            if(!is_numeric($values['DP_ID']) or empty($values['DP_PIN'])) return;
-            foreach ($values as $key => $value)
+            if (Tools::isSubmit('submitDotpayModule')) 
+            {
+                $values = $this->getConfigFormValues();
+                foreach (array_keys($values) as $key)
+                    $values[$key] = trim(Tools::getValue($key));
+                $values["DP_SSL"] = Configuration::get('PS_SSL_ENABLED') && Tools::getValue("DP_SSL");               
+                $values["DOTPAY_CONFIGURATION_OK"] = !empty($values["DP_PIN"]) && is_numeric($values["DP_ID"]);
+                if ($values["DOTPAY_CONFIGURATION_OK"] && Tools::strlen($values["DP_ID"]) < 6) $values["DP_TEST"] = false;
+                foreach ($values as $key => $value)
                     Configuration::updateValue($key, $value);
-            Configuration::updateValue('DOTPAY_CONFIGURATION_OK', true);
-	}
-
+            }
+        }
 	/**
 	* Add the CSS & JavaScript files you want to be loaded in the BO.
 	*/
 	public function hookBackOfficeHeader()
 	{
+            if (version_compare(_PS_VERSION_, "1.5.0.1", ">=")) {
 		$this->context->controller->addJS($this->_path.'js/back.js');
 		$this->context->controller->addCSS($this->_path.'css/back.css');
+            } else {
+                ToolsCore::addJS($this->_path.'/js/back.js');
+                ToolsCore::addCSS($this->_path.'/css/back.css');
+            }                        
 	}
-
 	/**
 	 * Add the CSS & JavaScript files you want to be added on the FO.
 	 */
 	public function hookHeader()
 	{
+            if (version_compare(_PS_VERSION_, "1.5.0.1", ">=")) {
 		$this->context->controller->addJS($this->_path.'/js/front.js');
 		$this->context->controller->addCSS($this->_path.'/css/front.css');
+            } else {
+                ToolsCore::addJS($this->_path.'/js/front.js');
+                ToolsCore::addCSS($this->_path.'/css/front.css');
+            }
 	}
 
     public function hookPayment()

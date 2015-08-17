@@ -1,4 +1,5 @@
-{*
+<?php
+/**
 *
 *
 * NOTICE OF LICENSE
@@ -20,19 +21,16 @@
 *  @author    Piotr Karecki <tech@dotpay.pl>
 *  @copyright dotpay
 *  @license   http://opensource.org/licenses/afl-3.0.php  Academic Free License (AFL 3.0)
-*  @last modified: Dotpay: 2015-08-04
-*  				   add: Dotpay logo proper depending on the language Store (pl or en)	 
 *
-*}
-<p class="dotpay_return"><img src="{$module_dir}img/Dotpay_logo_napis{if $lang_iso == 'pl'}_pl{else}_en{/if}.png" /><img width="128" height="128" src="{$module_dir}img/loading2.gif" /></p>
-<p class="dotpay_return">{l s='Yours payment is loading. Please wait.' mod='dotpay'}</p>
-<form action="{$form_url}" method="post" id="dpForm" name="dpForm" target="_parent">
-{foreach from=$params key=k item=v}
-<input type="hidden" name="{$k}" value="{$v}"/>
-{/foreach}
-</form>
-{literal}
-<script language="JavaScript">
-setTimeout(function(){document.dpForm.submit()}, 3000);
-</script>
-{/literal}
+*/
+
+if (!defined('_PS_VERSION_'))
+	exit;
+
+function upgrade_module_1_4_9($module)
+{
+        Configuration::updateValue('DP_TEST', false);
+		Configuration::updateValue('DP_CHK', false);
+        Configuration::updateValue('DP_SSL', false);
+	return $module;
+}

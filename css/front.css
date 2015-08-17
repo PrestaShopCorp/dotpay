@@ -28,8 +28,8 @@
 .dotpay_return {
     text-align: center; }
 p.payment_module a.dotpay {
-    background: url(http://www.dotpay.pl/wp-content/themes/build/img/logo.png) 15px 35px no-repeat #fbfbfb;
-    background-size: 64px 18px; }
+    background: url("../img/dotpay_logo64.png") 15px 12px no-repeat #fbfbfb;
+    background-size: 64px 64px; }
     
 p.payment_module a.dotpay:after {
     display: block;
