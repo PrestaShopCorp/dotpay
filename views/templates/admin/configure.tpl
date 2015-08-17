@@ -33,7 +33,7 @@
         <li>{l s='an activation fee - only PLN 10' mod='dotpay'}</li>
         <li><b>{l s='without any additional fees' mod='dotpay'}</b> {l s='for refunds and withdrawals!' mod='dotpay'}</li>
     </ul>
-    <p>{l s='In short, minimalizing effort and work time you will increase your sales possibilities. Do not hesitate and start your account now!' mod='dotpay'}</p>
+    <p>{l s='In short, minimizing effort and work time you will increase your sales possibilities. Do not hesitate and start your account now!' mod='dotpay'}</p>
     <div class="cta-button-container">
         <a href="http://www.dotpay.pl/prestashop/" class="cta-button">{l s='Register now!' mod='dotpay'}</a>
     </div>
@@ -41,10 +41,10 @@
 {/if}
 <div class="panel"><div class="dotpay-config">
     <h3>{l s='Configuration' mod='dotpay'}</h3>
-    <p>{l s='Thanks to Dotpay payment module the only activities needed for integration are: rewriting ID and PIN numbers and URLC confirmation configuration.' mod='dotpay'}</p>
-    <p>{l s='ID and PIN can be found in Dotpay panel in Settings on the top bar. ID number is a 6-digit string placed after # in a “Shop” line.' mod='dotpay'}</p>
-    <p>{l s='URLC configuration is just setting an address to which information about a payment should be directed. This address is:' mod='dotpay'} <b>{$DP_URLC}</b></p>
-    <p>{l s='If you possess a few shops connected with one dotpay account URL must be directed automatically and “Block external urlc” must not be ticked in Edition section.' mod='dotpay'}</p>
+    <p>{l s='Thanks to Dotpay payment module the only activities needed for integration are: ID and PIN numbers and URLC confirmation configuration.' mod='dotpay'}</p>
+    <p>{l s='ID and PIN can be found in Dotpay panel in Settings in the top bar. ID number is a 6-digit string after # in a “Shop” line.' mod='dotpay'}</p>
+    <p>{l s='URLC configuration is just setting an address to which information about payment should be directed. This address is:' mod='dotpay'} <b>{$DP_URLC}</b></p>
+    <p>{l s='If you own many shops connected to one Dotpay account, URL must be directed automatically and “Block external urlc” must not be ticked in Edition section.' mod='dotpay'}</p>
     <p>{l s='More information can be found in Dotpay manual.' mod='dotpay'}</p>
 </div></div>
 
@@ -52,13 +52,13 @@
     <h3>{l s='Configuration state' mod='dotpay'}</h3>
     {if $DOTPAY_CONFIGURATION_OK}
         <table><tr><td><img width="100" height="100" src="{$module_dir}img/tick.png"></td><td><p>
-        <p>{l s='Module is active. If you do not recive payment information, please chcek URLC configuration.' mod='dotpay'}</p>
+        <p>{l s='Module is active. If you do not receive payment information, please chcek URLC configuration.' mod='dotpay'}</p>
         <p>{if $DP_TEST}{l s='Module is in TEST mode. All payment informations are fake!' mod='dotpay'}{/if}</p>
         </p></td></tr></table>
     {else}
         <table><tr><td><img width="100" height="100" src="{$module_dir}img/cross.png"></td><td>
-        <p>{l s='Module is not active. Please check yours configuration.' mod='dotpay'}</p>
-        <p>{l s='ID and PIN can be found in Dotpay panel in Settings on the top bar. ID number is a 6-digit string placed after # in a “Shop” line.' mod='dotpay'}</p>
+        <p>{l s='Module is not active. Please check your configuration.' mod='dotpay'}</p>
+        <p>{l s='ID and PIN can be found in Dotpay panel in Settings in the top bar. ID number is a 6-digit string after # in a “Shop” line.' mod='dotpay'}</p>
         </p></td></tr></table>
     {/if}
 </div></div>

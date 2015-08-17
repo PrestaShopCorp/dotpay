@@ -25,6 +25,23 @@
 * Don't forget to prefix your containers with your own identifier
 * to avoid any conflicts with others containers.
 */
-.dotpay {
-	text-align: center;
-}
+.dotpay_return {
+    text-align: center; }
+p.payment_module a.dotpay {
+    background: url("../img/dotpay_logo64.png") 15px 12px no-repeat #fbfbfb;
+    background-size: 64px 64px; }
+    
+p.payment_module a.dotpay:after {
+    display: block;
+    content: "\f054";
+    position: absolute;
+    right: 15px;
+    margin-top: -11px;
+    top: 50%;
+    font-family: "FontAwesome";
+    font-size: 25px;
+    height: 22px;
+    width: 14px;
+    color: #777777; }
+p.payment_module a:hover {
+    background-color: #f6f6f6; }

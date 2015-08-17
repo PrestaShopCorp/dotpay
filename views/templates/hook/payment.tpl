@@ -17,18 +17,18 @@
 * versions in the future. If you wish to customize PrestaShop for your
 * needs please refer to http://www.prestashop.com for more information.
 *
-*  @author    Piotr Karecki <tech@dotpay.pl>
-*  @copyright dotpay
+*  @author    Tech Dotpay <tech@dotpay.pl>
+*  @copyright Dotpay
 *  @license   http://opensource.org/licenses/afl-3.0.php  Academic Free License (AFL 3.0)
 *
 *}
 <div class="row">
 	<div class="col-xs-12">
 		<p class="payment_module">
-			<a href="{$link->getModuleLink('dotpay', 'payment')|escape:'html'}" title="{l s='Pay by dotpay' mod='dotpay'}">
-			<img src="{$module_dir}img/Logo_Dotpay_147x56.jpg" alt="{l s='Pay by dotpay' mod='dotpay'}" />
-				{l s='Pay by dotpay' mod='dotpay'}
+			<a class="dotpay" href="{$link->getModuleLink('dotpay', 'payment')|escape:'html'}" title="{l s='Pay by dotpay' mod='dotpay'}">
+				{l s='Pay by dotpay' mod='dotpay'}&nbsp;<span>{l s='(fast and secure internet payment)' mod='dotpay'}</span>
 					</a>
 		</p>
     </div>
 </div>
+
